@@ -1,0 +1,55 @@
+{
+    "name": "vscode-text-tables",
+    "displayName": "Text Tables",
+    "description": "Work with text tables without pain",
+    "version": "0.0.1",
+    "publisher": "RomanPeshkov",
+    "engines": {
+        "vscode": "^1.21.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:text-tables.formatUnderCursor"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "text-tables.formatUnderCursor",
+                "title": "Text Tables: Format under cursor"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Text Tables configuration",
+            "properties": {
+                "text-tables.mode": {
+                    "type": "string",
+                    "enum": [
+                        "markdown",
+                        "org"
+                    ],
+                    "default": "markdown",
+                    "description": "Sets the mode in which extension should work",
+                    "scope": "window"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "tslint": "^5.8.0",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    }
+}
