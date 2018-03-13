@@ -48,7 +48,13 @@
                     "scope": "window"
                 }
             }
-        }
+        },
+        "keybindings": [
+            {
+                "command": "text-tables.formatUnderCursor",
+                "key": "ctrl+q ctrl+f"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

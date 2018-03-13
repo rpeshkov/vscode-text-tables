@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
-const intersection = '|';
 
 export class MarkdownParser implements tt.Parser {
     parse(text: string): tt.Table | undefined {
@@ -57,14 +56,16 @@ export class MarkdownParser implements tt.Parser {
             result.addRow(tt.RowType.Data, values);
         }
 
+        result.normalize();
+        result.calculateColDefs();
+
         return result;
     }
 }
 
 export class MarkdownStringifier implements tt.Stringifier {
     stringify(table: tt.Table): string {
-        table.normalize();
-        table.calculateColDefs();
+
 
         const result = [];
 

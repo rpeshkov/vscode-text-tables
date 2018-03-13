@@ -40,11 +40,8 @@ export function activate(ctx: vscode.ExtensionContext) {
                         b.replace(selectedRange, newText);
                     });
                 }
-
             }
         }
-
-        //vscode.window.showInformationMessage(mode);
     }));
 }
 
