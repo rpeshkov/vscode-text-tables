@@ -5,6 +5,8 @@ const verticalSeparator = '|';
 const horizontalSeparator = '-';
 const intersection = '+';
 
+type StringReducer = (previous: string, current: string, index: number) => string;
+
 export class OrgParser implements tt.Parser {
     parse(text: string): tt.Table | undefined {
         if (!text || text.length === 0) {
@@ -40,32 +42,28 @@ export class OrgParser implements tt.Parser {
             result.addRow(tt.RowType.Data, values);
         }
 
+        result.normalize();
+        result.calculateColDefs();
+
         return result;
     }
 }
 
 export class OrgStringifier implements tt.Stringifier {
-    stringify(table: tt.Table): string {
-        table.normalize();
-        table.calculateColDefs();
+    private reducers = new Map([
+        [tt.RowType.Data, this.dataRowReducer],
+        [tt.RowType.Separator, this.separatorReducer],
+    ]);
 
+    stringify(table: tt.Table): string {
         const result = [];
 
         for (let i = 0; i < table.rows.length; ++i) {
             let rowString = '';
             const rowData = table.getRow(i);
-            if (table.rows[i].type === tt.RowType.Data) {
-                rowString = rowData.reduce((prev, cur, idx) => {
-                    const pad = ' '.repeat(table.cols[idx].width - cur.length + 1);
-                    return prev + ' ' + cur + pad + verticalSeparator;
-                }, verticalSeparator);
-            } else {
-                rowString = rowData.reduce((prev, _, idx) => {
-                    const ending = (idx === table.cols.length - 1)
-                        ? verticalSeparator
-                        : intersection;
-                    return prev + horizontalSeparator.repeat(table.cols[idx].width + 2) + ending;
-                }, verticalSeparator);
+            const reducer = this.reducers.get(table.rows[i].type);
+            if (reducer) {
+                rowString = rowData.reduce(reducer(table.cols), verticalSeparator);
             }
 
             result.push(rowString);
@@ -73,16 +71,44 @@ export class OrgStringifier implements tt.Stringifier {
 
         return result.join('\n');
     }
+
+    private dataRowReducer(cols: tt.ColDef[]): StringReducer {
+        return (prev, cur, idx) => {
+            const pad = ' '.repeat(cols[idx].width - cur.length + 1);
+            return prev + ' ' + cur + pad + verticalSeparator;
+        };
+    }
+
+    private separatorReducer(cols: tt.ColDef[]): (p: string, c: string, i: number) => string {
+        return (prev, _, idx) => {
+            // Intersections for each cell are '+', except the last one, where it should be '|'
+            const ending = (idx === cols.length - 1)
+                ? verticalSeparator
+                : intersection;
+
+            return prev + horizontalSeparator.repeat(cols[idx].width + 2) + ending;
+        };
+    }
 }
 
 export class OrgLocator implements tt.Locator {
+    /**
+     * Locate start and end of Org table in text from line number.
+     *
+     * @param reader Reader that is able to read line by line
+     * @param lineNr Current line number
+     * @returns vscode.Range if table was located. undefined if it failed
+     */
     locate(reader: tt.LineReader, lineNr: number): vscode.Range | undefined {
+
+        // Checks that line starts with vertical bar
         const isTableLikeString = (lineNr: number) => {
             if (lineNr < 0 || lineNr >= reader.lineCount) {
                 return false;
             }
-            const firstCharIdx = reader.lineAt(lineNr).firstNonWhitespaceCharacterIndex;
-            const firstChar = reader.lineAt(lineNr).text[firstCharIdx];
+            const line = reader.lineAt(lineNr);
+            const firstCharIdx = line.firstNonWhitespaceCharacterIndex;
+            const firstChar = line.text[firstCharIdx];
             return firstChar === '|';
         };
 
