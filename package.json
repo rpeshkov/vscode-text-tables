@@ -13,10 +13,14 @@
         "vscode": "^1.21.0"
     },
     "categories": [
-        "Formatters", "Other"
+        "Formatters",
+        "Other"
     ],
     "keywords": [
-        "org-mode", "org", "tables", "markdown"
+        "org-mode",
+        "org",
+        "tables",
+        "markdown"
     ],
     "activationEvents": [
         "onCommand:text-tables.formatUnderCursor"
