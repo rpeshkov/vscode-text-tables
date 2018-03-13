@@ -4,11 +4,19 @@
     "description": "Work with text tables without pain",
     "version": "0.0.1",
     "publisher": "RomanPeshkov",
+    "license": "SEE LICENSE IN LICENSE",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/rpeshkov/vscode-text-tables"
+    },
     "engines": {
         "vscode": "^1.21.0"
     },
     "categories": [
-        "Other"
+        "Formatters", "Other"
+    ],
+    "keywords": [
+        "org-mode", "org", "tables", "markdown"
     ],
     "activationEvents": [
         "onCommand:text-tables.formatUnderCursor"
