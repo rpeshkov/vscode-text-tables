@@ -24,6 +24,9 @@ export function activate(ctx: vscode.ExtensionContext) {
             stringifier = new MarkdownStringifier();
         }
 
+        vscode.commands.executeCommand('setContext', 'inTable', true);
+        vscode.commands.executeCommand('setContext', 'someOtherContext', true);
+
 
         if (vscode.window.activeTextEditor !== undefined) {
             const editor = vscode.window.activeTextEditor;
