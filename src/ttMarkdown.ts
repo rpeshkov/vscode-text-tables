@@ -1,5 +1,6 @@
 import * as tt from './ttTable';
 import * as vscode from 'vscode';
+import { isUndefined } from 'util';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
@@ -11,22 +12,19 @@ export class MarkdownParser implements tt.Parser {
         }
 
         const result = new tt.Table();
-
-        const strings = text.split('\n');
+        const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
 
         for (let s of strings) {
-            s = s.trim();
+            let cleanedString = s.replace(/\s+/g, '');
 
-            if (!s.startsWith(verticalSeparator)) {
-                continue;
-            }
-
-            const cleanedString = s.replace(/\s+/g, '');
             if (cleanedString.startsWith('|-') || cleanedString.startsWith('|:-')) {
                 result.addRow(tt.RowType.Separator, []);
-                for (let part of cleanedString.split('|')) {
+                const startIndex = cleanedString.startsWith(verticalSeparator) ? 1 : 0;
+                const endIndex = cleanedString.length - (cleanedString.endsWith(verticalSeparator) ? 1 : 0);
+
+                cleanedString.slice(startIndex, endIndex).split('|').forEach((part, i) => {
                     if (part.length < 3) {
-                        continue;
+                        return;
                     }
                     let trimmed = part.trim();
                     let align = tt.Alignment.Left;
@@ -37,16 +35,18 @@ export class MarkdownParser implements tt.Parser {
                             align = tt.Alignment.Right;
                         }
                     }
+                    let col = result.cols[i];
+                    if (col) {
+                        col.alignment = align;
+                    } else {
+                        result.cols.push({ alignment: align, width: 3 });
+                    }
+                });
 
-                    result.cols.push({alignment: align, width: 3});
-                }
                 continue;
             }
 
-            let lastIndex = s.length;
-            if (s.endsWith(verticalSeparator)) {
-                lastIndex--;
-            }
+            const lastIndex = s.length - (s.endsWith(verticalSeparator) ? 1 : 0);
 
             const values = s
                 .slice(1, lastIndex)
@@ -55,9 +55,6 @@ export class MarkdownParser implements tt.Parser {
 
             result.addRow(tt.RowType.Data, values);
         }
-
-        // result.normalize();
-        // result.calculateColDefs();
 
         return result;
     }
