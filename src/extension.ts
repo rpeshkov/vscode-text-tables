@@ -81,6 +81,24 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
     }));
 
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.gotoPreviousCell', () => {
+        if (!isUndefined(vscode.window.activeTextEditor)) {
+            const editor = vscode.window.activeTextEditor;
+            const tableRange = locator.locate(editor.document, editor.selection.start.line);
+
+            if (tableRange !== undefined) {
+                const tableText = editor.document.getText(tableRange);
+                const table = parser.parse(tableText);
+
+                if (table !== undefined) {
+                    const nav = new TableNavigator(table);
+                    const newPos = nav.previousCell(editor.selection.start);
+                    editor.selection = new vscode.Selection(newPos, newPos);
+                }
+            }
+        }
+    }));
+
     // Format table under cursor
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.formatUnderCursor', () => {
         if (vscode.window.activeTextEditor !== undefined) {

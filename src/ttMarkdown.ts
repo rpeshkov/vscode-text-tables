@@ -1,6 +1,5 @@
 import * as tt from './ttTable';
 import * as vscode from 'vscode';
-import { isUndefined } from 'util';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';

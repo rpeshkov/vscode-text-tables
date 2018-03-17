@@ -43,7 +43,11 @@
             },
             {
                 "command": "text-tables.gotoNextCell",
-                "title": "Text Tables: Goto next cell"
+                "title": "Text Tables: Go to next cell"
+            },
+            {
+                "command": "text-tables.gotoPreviousCell",
+                "title": "Text Tables: Go to previous cell"
             }
         ],
         "configuration": {
@@ -70,6 +74,11 @@
             {
                 "command": "text-tables.gotoNextCell",
                 "key": "tab",
+                "when": "tableMode"
+            },
+            {
+                "command": "text-tables.gotoPreviousCell",
+                "key": "shift+tab",
                 "when": "tableMode"
             }
         ]

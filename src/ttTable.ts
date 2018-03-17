@@ -78,6 +78,11 @@ export interface LineReader {
     lineCount: number;
 }
 
+interface Pos {
+    start: number;
+    end: number;
+}
+
 export class TableNavigator {
     constructor(
         public table: Table) { }
@@ -86,24 +91,40 @@ export class TableNavigator {
         if (cursorPosition.character === 0) {
             return cursorPosition.translate(0, 2);
         }
-        let counter = 1;
+
         const charPos = cursorPosition.character;
+        const colPos = this.getColumnsPosition();
+        const colIndex = colPos.findIndex(x => charPos >= x.start && charPos < x.end);
+        if (colIndex === this.table.cols.length - 1) {
+            return new vscode.Position(cursorPosition.line + 1, 2);
+        } else {
+            return new vscode.Position(cursorPosition.line, colPos[colIndex + 1].start + 1);
+        }
+    }
 
-        for (let i = 0; i < this.table.cols.length; i++) {
-            const col = this.table.cols[i];
-            const width = col.width + 2;
-            if (charPos >= counter && charPos < counter + width) {
-                if (i === this.table.cols.length - 1) {
-                    break; // Outer return will move to next line
-                } else {
-                    return new vscode.Position(cursorPosition.line, counter + width + 2);
-                }
-            }
-
-            counter += col.width + 3;
+    previousCell(cursorPosition: vscode.Position): vscode.Position {
+        if (cursorPosition.character === 0) {
+            return cursorPosition.translate(0, 2);
         }
 
+        const charPos = cursorPosition.character;
+        const colPos = this.getColumnsPosition();
+        const colIndex = colPos.findIndex(x => charPos >= x.start && charPos < x.end);
+        if (colIndex === 0) {
+            return new vscode.Position(cursorPosition.line - 1, colPos[colPos.length -1].start + 1);
+        } else {
+            return new vscode.Position(cursorPosition.line, colPos[colIndex - 1].start + 1);
+        }
+    }
 
-        return new vscode.Position(cursorPosition.line + 1, 2);
+    private getColumnsPosition(): Pos[] {
+        let counter = 1;
+        return this.table.cols.reduce((prev: Pos[], cur) => {
+            prev.push({start: counter, end: counter + cur.width + 2});
+            counter += cur.width + 3;
+            return prev;
+        }, []);
+
+
     }
 }
