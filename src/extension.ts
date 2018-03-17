@@ -21,14 +21,15 @@ function setContext(context: string, state: boolean) {
 
 export function activate(ctx: vscode.ExtensionContext) {
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    statusItem.text = 'Table Mode: Off';
+
+    statusItem.text = '$(book) Table Mode: Off';
     statusItem.show();
 
     // Enter table mode context
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOn',
         () => {
             setContext('tableMode', true);
-            statusItem.text = 'Table Mode: On';
+            statusItem.text = '$(book) Table Mode: On';
         }));
 
 
@@ -36,7 +37,7 @@ export function activate(ctx: vscode.ExtensionContext) {
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOff',
         () => {
             setContext('tableMode', false);
-            statusItem.text = 'Table Mode: Off';
+            statusItem.text = '$(book) Table Mode: Off';
         }));
 
     // Format table under cursor
@@ -60,18 +61,15 @@ export function activate(ctx: vscode.ExtensionContext) {
 
         if (vscode.window.activeTextEditor !== undefined) {
             const editor = vscode.window.activeTextEditor;
-
             const selectedRange = locator.locate(editor.document, editor.selection.start.line);
+
             if (selectedRange !== undefined) {
                 const selectedText = editor.document.getText(selectedRange);
-
                 const table = parser.parse(selectedText);
+
                 if (table !== undefined) {
                     const newText = stringifier.stringify(table);
-
-                    editor.edit(b => {
-                        b.replace(selectedRange, newText);
-                    });
+                    editor.edit(b => b.replace(selectedRange, newText));
                 }
             }
         }
