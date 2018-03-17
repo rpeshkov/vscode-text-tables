@@ -23,7 +23,8 @@
         "markdown"
     ],
     "activationEvents": [
-        "onCommand:text-tables.formatUnderCursor"
+        "onLanguage:markdown",
+        "onLanguage:org"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -31,6 +32,14 @@
             {
                 "command": "text-tables.formatUnderCursor",
                 "title": "Text Tables: Format under cursor"
+            },
+            {
+                "command": "text-tables.tableModeOn",
+                "title": "Text Tables: Enter table mode"
+            },
+            {
+                "command": "text-tables.tableModeOff",
+                "title": "Text Tables: Exit table mode"
             }
         ],
         "configuration": {
