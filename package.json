@@ -40,6 +40,10 @@
             {
                 "command": "text-tables.tableModeOff",
                 "title": "Text Tables: Exit table mode"
+            },
+            {
+                "command": "text-tables.gotoNextCell",
+                "title": "Text Tables: Goto next cell"
             }
         ],
         "configuration": {
@@ -62,6 +66,11 @@
             {
                 "command": "text-tables.formatUnderCursor",
                 "key": "ctrl+q ctrl+f"
+            },
+            {
+                "command": "text-tables.gotoNextCell",
+                "key": "tab",
+                "when": "tableMode"
             }
         ]
     },

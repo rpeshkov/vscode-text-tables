@@ -1,9 +1,10 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { OrgLocator, OrgParser, OrgStringifier } from './ttOrg';
-import { Locator, Parser, Stringifier } from './ttTable';
+import { OrgLocator, OrgParser, OrgStringifier  } from './ttOrg';
+import { Locator, Parser, Stringifier, TableNavigator } from './ttTable';
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown';
+import { isUndefined } from 'util';
 
 enum TextTablesMode {
     Org = "org",
@@ -19,11 +20,33 @@ function setContext(context: string, state: boolean) {
     vscode.commands.executeCommand('setContext', context, state);
 }
 
+let locator: Locator;
+let parser: Parser;
+let stringifier: Stringifier;
+
+function loadConfiguration() {
+    const config = vscode.workspace.getConfiguration('text-tables');
+    const mode = config.get<string>('mode', TextTablesMode.Markdown);
+
+    if (mode === TextTablesMode.Org) {
+        locator = new OrgLocator();
+        parser = new OrgParser();
+        stringifier = new OrgStringifier();
+    } else {
+        locator = new MarkdownLocator();
+        parser = new MarkdownParser();
+        stringifier = new MarkdownStringifier();
+    }
+}
+
 export function activate(ctx: vscode.ExtensionContext) {
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 
     statusItem.text = '$(book) Table Mode: Off';
     statusItem.show();
+
+    loadConfiguration();
+    vscode.workspace.onDidChangeConfiguration(() => loadConfiguration());
 
     // Enter table mode context
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOn',
@@ -40,25 +63,26 @@ export function activate(ctx: vscode.ExtensionContext) {
             statusItem.text = '$(book) Table Mode: Off';
         }));
 
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.gotoNextCell', () => {
+        if (!isUndefined(vscode.window.activeTextEditor)) {
+            const editor = vscode.window.activeTextEditor;
+            const tableRange = locator.locate(editor.document, editor.selection.start.line);
+
+            if (tableRange !== undefined) {
+                const tableText = editor.document.getText(tableRange);
+                const table = parser.parse(tableText);
+
+                if (table !== undefined) {
+                    const nav = new TableNavigator(table);
+                    const newPos = nav.nextCell(editor.selection.start);
+                    editor.selection = new vscode.Selection(newPos, newPos);
+                }
+            }
+        }
+    }));
+
     // Format table under cursor
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.formatUnderCursor', () => {
-        const config = vscode.workspace.getConfiguration('text-tables');
-        const mode = config.get<string>('mode', TextTablesMode.Markdown);
-
-        let locator: Locator;
-        let parser: Parser;
-        let stringifier: Stringifier;
-
-        if (mode === TextTablesMode.Org) {
-            locator = new OrgLocator();
-            parser = new OrgParser();
-            stringifier = new OrgStringifier();
-        } else {
-            locator = new MarkdownLocator();
-            parser = new MarkdownParser();
-            stringifier = new MarkdownStringifier();
-        }
-
         if (vscode.window.activeTextEditor !== undefined) {
             const editor = vscode.window.activeTextEditor;
             const selectedRange = locator.locate(editor.document, editor.selection.start.line);

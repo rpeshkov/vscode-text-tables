@@ -56,8 +56,8 @@ export class MarkdownParser implements tt.Parser {
             result.addRow(tt.RowType.Data, values);
         }
 
-        result.normalize();
-        result.calculateColDefs();
+        // result.normalize();
+        // result.calculateColDefs();
 
         return result;
     }

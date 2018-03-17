@@ -28,7 +28,23 @@ export class Table {
     private data: string[][] = [];
 
     addRow(type: RowType, values: string[]) {
-        this.rows.push({type});
+        let adjustCount = values.length - this.cols.length;
+        while (adjustCount-- > 0) {
+            this.cols.push({ alignment: Alignment.Left, width: 0 });
+        }
+
+        for (const row of this.data) {
+            const adjustee = row.length < values.length ? row : values;
+            adjustCount = Math.abs(row.length - values.length);
+
+            while (adjustCount-- > 0) {
+                adjustee.push('');
+            }
+        }
+
+        this.cols.forEach((col, i) => col.width = Math.max(col.width, values[i].length));
+
+        this.rows.push({ type });
         this.data.push(values);
     }
 
@@ -42,32 +58,6 @@ export class Table {
 
     setAt(row: number, col: number, value: string) {
         this.data[row][col] = value;
-    }
-
-    normalize() {
-        const maxColumns = Math.max(...this.data.map(x => x.length));
-
-        for (const row of this.data) {
-            while (row.length < maxColumns) {
-                row.push('');
-            }
-        }
-    }
-
-    calculateColDefs() {
-        const colCount = this.data[0].length;
-        const adjustCount = colCount - this.cols.length;
-        for (let i = 0; i < adjustCount; ++i) {
-            this.cols.push({ alignment: Alignment.Left, width: 0 });
-        }
-
-        for (let row = 0; row < this.data.length; ++row) {
-            for (let col = 0; col < this.data[row].length; ++col) {
-                if (this.data[row][col].length > this.cols[col].width) {
-                    this.cols[col].width = this.data[row][col].length;
-                }
-            }
-        }
     }
 }
 
@@ -86,4 +76,34 @@ export interface Locator {
 export interface LineReader {
     lineAt(line: number): vscode.TextLine;
     lineCount: number;
+}
+
+export class TableNavigator {
+    constructor(
+        public table: Table) { }
+
+    nextCell(cursorPosition: vscode.Position): vscode.Position {
+        if (cursorPosition.character === 0) {
+            return cursorPosition.translate(0, 2);
+        }
+        let counter = 1;
+        const charPos = cursorPosition.character;
+
+        for (let i = 0; i < this.table.cols.length; i++) {
+            const col = this.table.cols[i];
+            const width = col.width + 2;
+            if (charPos >= counter && charPos < counter + width) {
+                if (i === this.table.cols.length - 1) {
+                    break; // Outer return will move to next line
+                } else {
+                    return new vscode.Position(cursorPosition.line, counter + width + 2);
+                }
+            }
+
+            counter += col.width + 3;
+        }
+
+
+        return new vscode.Position(cursorPosition.line + 1, 2);
+    }
 }

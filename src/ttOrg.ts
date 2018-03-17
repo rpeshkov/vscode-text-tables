@@ -14,26 +14,15 @@ export class OrgParser implements tt.Parser {
         }
 
         const result = new tt.Table();
+        const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
 
-        const strings = text.split('\n');
-
-        for (let s of strings) {
-            s = s.trim();
-
-            if (!s.startsWith(verticalSeparator)) {
-                continue;
-            }
-
+        for (const s of strings) {
             if (s.length > 1 && s[1] === horizontalSeparator) {
                 result.addRow(tt.RowType.Separator, []);
                 continue;
             }
 
-            let lastIndex = s.length;
-            if (s.endsWith(verticalSeparator)) {
-                lastIndex--;
-            }
-
+            const lastIndex = s.length - (s.endsWith(verticalSeparator) ? 1 : 0);
             const values = s
                 .slice(1, lastIndex)
                 .split(verticalSeparator)
@@ -41,9 +30,6 @@ export class OrgParser implements tt.Parser {
 
             result.addRow(tt.RowType.Data, values);
         }
-
-        result.normalize();
-        result.calculateColDefs();
 
         return result;
     }
