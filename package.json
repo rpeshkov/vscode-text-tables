@@ -72,6 +72,16 @@
                 "key": "ctrl+q ctrl+f"
             },
             {
+                "command": "text-tables.tableModeOn",
+                "key": "ctrl+q ctrl+q",
+                "when": "editorFocus && !tableMode"
+            },
+            {
+                "command": "text-tables.tableModeOff",
+                "key": "ctrl+q ctrl+q",
+                "when": "editorFocus && tableMode"
+            },
+            {
                 "command": "text-tables.gotoNextCell",
                 "key": "tab",
                 "when": "tableMode"
