@@ -4,6 +4,8 @@ import * as vscode from 'vscode';
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
 
+type StringReducer = (previous: string, current: string, index: number) => string;
+
 export class MarkdownParser implements tt.Parser {
     parse(text: string): tt.Table | undefined {
         if (!text || text.length === 0) {
@@ -18,10 +20,12 @@ export class MarkdownParser implements tt.Parser {
 
             if (cleanedString.startsWith('|-') || cleanedString.startsWith('|:-')) {
                 result.addRow(tt.RowType.Separator, []);
+                result.cols.forEach(x => x.width = Math.max(x.width, 3));
                 const startIndex = cleanedString.startsWith(verticalSeparator) ? 1 : 0;
                 const endIndex = cleanedString.length - (cleanedString.endsWith(verticalSeparator) ? 1 : 0);
+                const rowParts = cleanedString.slice(startIndex, endIndex).split('|');
 
-                cleanedString.slice(startIndex, endIndex).split('|').forEach((part, i) => {
+                rowParts.forEach((part, i) => {
                     if (part.length < 3) {
                         return;
                     }
@@ -60,35 +64,47 @@ export class MarkdownParser implements tt.Parser {
 }
 
 export class MarkdownStringifier implements tt.Stringifier {
+    private reducers = new Map([
+        [tt.RowType.Data, this.dataRowReducer],
+        [tt.RowType.Separator, this.separatorReducer],
+    ]);
+
     stringify(table: tt.Table): string {
-
-
         const result = [];
 
         for (let i = 0; i < table.rows.length; ++i) {
             let rowString = '';
             const rowData = table.getRow(i);
-            if (table.rows[i].type === tt.RowType.Data) {
-                rowString = rowData.reduce((prev, cur, idx) => {
-                    const pad = ' '.repeat(table.cols[idx].width - cur.length + 1);
-                    return prev + ' ' + cur + pad + verticalSeparator;
-                }, verticalSeparator);
-            } else {
-                rowString = rowData.reduce((prev, _, idx) => {
-                    const begin = table.cols[idx].alignment === tt.Alignment.Center
-                        ? ' :'
-                        : ' -';
-                    const ending = table.cols[idx].alignment !== tt.Alignment.Left
-                         ? ': ' + verticalSeparator
-                         : '- ' + verticalSeparator;
-                    return prev + begin + horizontalSeparator.repeat(table.cols[idx].width-2) + ending;
-                }, verticalSeparator);
+            const reducer = this.reducers.get(table.rows[i].type);
+            if (reducer) {
+                rowString = rowData.reduce(reducer(table.cols), verticalSeparator);
             }
-
             result.push(rowString);
         }
 
         return result.join('\n');
+    }
+
+    private dataRowReducer(cols: tt.ColDef[]): StringReducer {
+        return (prev, cur, idx) => {
+            const pad = ' '.repeat(cols[idx].width - cur.length + 1);
+            return prev + ' ' + cur + pad + verticalSeparator;
+        };
+    }
+
+    private separatorReducer(cols: tt.ColDef[]): StringReducer {
+        return (prev, _, idx) => {
+            const begin = cols[idx].alignment === tt.Alignment.Center
+                ? ' :'
+                : ' -';
+            const ending = cols[idx].alignment !== tt.Alignment.Left
+                ? ': ' + verticalSeparator
+                : '- ' + verticalSeparator;
+
+            const middle = horizontalSeparator.repeat(cols[idx].width - 2);
+
+            return prev + begin + middle + ending;
+        };
     }
 }
 
