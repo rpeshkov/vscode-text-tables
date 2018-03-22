@@ -73,6 +73,8 @@ export function activate(ctx: vscode.ExtensionContext) {
                 const table = parser.parse(tableText);
 
                 if (table !== undefined) {
+                    const newText = stringifier.stringify(table);
+                    editor.edit(b => b.replace(tableRange, newText));
                     const nav = new TableNavigator(table);
                     const newPos = nav.nextCell(editor.selection.start);
                     editor.selection = new vscode.Selection(newPos, newPos);
@@ -91,6 +93,8 @@ export function activate(ctx: vscode.ExtensionContext) {
                 const table = parser.parse(tableText);
 
                 if (table !== undefined) {
+                    const newText = stringifier.stringify(table);
+                    editor.edit(b => b.replace(tableRange, newText));
                     const nav = new TableNavigator(table);
                     const newPos = nav.previousCell(editor.selection.start);
                     editor.selection = new vscode.Selection(newPos, newPos);
