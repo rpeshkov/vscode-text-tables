@@ -3,7 +3,7 @@
     "displayName": "Text Tables",
     "description": "Work with text tables without pain",
     "version": "0.0.1",
-    "icon": "./icons/icon.png",
+    "icon": "icons/icon.png",
     "preview": true,
     "publisher": "RomanPeshkov",
     "license": "SEE LICENSE IN LICENSE",
