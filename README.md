@@ -1,5 +1,7 @@
 # Text Tables
 
+[![Build Status](https://travis-ci.org/rpeshkov/vscode-text-tables.svg?branch=master)](https://travis-ci.org/rpeshkov/vscode-text-tables)
+
 ![Text tables](icons/icon.png)
 
 VSCode extension that brings the power of Emacs table editing.
