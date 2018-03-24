@@ -22,9 +22,11 @@ Extension provides several commands that are available in the Command Palette:
 - `Text Tables: Go to next cell` - switch to next cell in current table.
 - `Text Tables: Go to previous cell` - switch to previous cell in current table.
 
+You can access all of the above commands from the command pallete (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd> or <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd>)
+
 ## Table mode
 
-Table mode is the mode where some of the defaults keybindings have another action assigned.
+Table mode is the mode where some of the default keybindings have another action assigned.
 
 To enter table mode you may execute command `Text Tables: Enter table mode` from command palette or press <kbd>Ctrl</kbd>+<kbd>q</kbd> <kbd>Ctrl</kbd>+<kbd>q</kbd> shortcut to toggle mode. To control whether you're in table mode or not, see the icon in the status bar of Visual Studio Code:
 
