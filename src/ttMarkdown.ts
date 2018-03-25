@@ -15,8 +15,8 @@ export class MarkdownParser implements tt.Parser {
         const result = new tt.Table();
         const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
 
-        for (let s of strings) {
-            let cleanedString = s.replace(/\s+/g, '');
+        for (const s of strings) {
+            const cleanedString = s.replace(/\s+/g, '');
 
             if (cleanedString.startsWith('|-') || cleanedString.startsWith('|:-')) {
                 result.addRow(tt.RowType.Separator, []);
@@ -29,7 +29,7 @@ export class MarkdownParser implements tt.Parser {
                     if (part.length < 3) {
                         return;
                     }
-                    let trimmed = part.trim();
+                    const trimmed = part.trim();
                     let align = tt.Alignment.Left;
                     if (trimmed[trimmed.length - 1] === ':') {
                         if (trimmed[0] === ':') {
@@ -38,7 +38,7 @@ export class MarkdownParser implements tt.Parser {
                             align = tt.Alignment.Right;
                         }
                     }
-                    let col = result.cols[i];
+                    const col = result.cols[i];
                     if (col) {
                         col.alignment = align;
                     } else {
@@ -110,12 +110,12 @@ export class MarkdownStringifier implements tt.Stringifier {
 
 export class MarkdownLocator implements tt.Locator {
     locate(reader: tt.LineReader, lineNr: number): vscode.Range | undefined {
-        const isTableLikeString = (lineNr: number) => {
-            if (lineNr < 0 || lineNr >= reader.lineCount) {
+        const isTableLikeString = (ln: number) => {
+            if (ln < 0 || ln >= reader.lineCount) {
                 return false;
             }
-            const firstCharIdx = reader.lineAt(lineNr).firstNonWhitespaceCharacterIndex;
-            const firstChar = reader.lineAt(lineNr).text[firstCharIdx];
+            const firstCharIdx = reader.lineAt(ln).firstNonWhitespaceCharacterIndex;
+            const firstChar = reader.lineAt(ln).text[firstCharIdx];
             return firstChar === '|';
         };
 

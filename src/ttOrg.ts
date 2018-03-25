@@ -88,11 +88,11 @@ export class OrgLocator implements tt.Locator {
     locate(reader: tt.LineReader, lineNr: number): vscode.Range | undefined {
 
         // Checks that line starts with vertical bar
-        const isTableLikeString = (lineNr: number) => {
-            if (lineNr < 0 || lineNr >= reader.lineCount) {
+        const isTableLikeString = (ln: number) => {
+            if (ln < 0 || ln >= reader.lineCount) {
                 return false;
             }
-            const line = reader.lineAt(lineNr);
+            const line = reader.lineAt(ln);
             const firstCharIdx = line.firstNonWhitespaceCharacterIndex;
             const firstChar = line.text[firstCharIdx];
             return firstChar === '|';

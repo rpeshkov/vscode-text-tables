@@ -124,7 +124,5 @@ export class TableNavigator {
             counter += cur.width + 3;
             return prev;
         }, []);
-
-
     }
 }
