@@ -111,7 +111,7 @@ export class TableNavigator {
         const colPos = this.getColumnsPosition();
         const colIndex = colPos.findIndex(x => charPos >= x.start && charPos < x.end);
         if (colIndex === 0) {
-            return new vscode.Position(cursorPosition.line - 1, colPos[colPos.length -1].start + 1);
+            return new vscode.Position(cursorPosition.line - 1, colPos[colPos.length - 1].start + 1);
         } else {
             return new vscode.Position(cursorPosition.line, colPos[colIndex - 1].start + 1);
         }
@@ -124,7 +124,5 @@ export class TableNavigator {
             counter += cur.width + 3;
             return prev;
         }, []);
-
-
     }
 }

@@ -7,8 +7,8 @@ import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdo
 import { isUndefined } from 'util';
 
 enum TextTablesMode {
-    Org = "org",
-    Markdown = "markdown"
+    Org = 'org',
+    Markdown = 'markdown'
 }
 
 /**
@@ -54,7 +54,6 @@ export function activate(ctx: vscode.ExtensionContext) {
             setContext('tableMode', true);
             statusItem.text = '$(book) Table Mode: On';
         }));
-
 
     // Exit table mode context
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOff',

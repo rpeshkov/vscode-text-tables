@@ -1,15 +1,75 @@
 {
 	"rules": {
+		"quotemark": [
+			true,
+			"single"
+		],
+		"max-line-length": [
+			true,
+			140
+		],
+		"comment-format": [
+			true,
+			"check-space"
+		],
+		"indent": [
+			true,
+			"spaces"
+		],
+		"no-console": [
+			true,
+			"debug",
+			"info",
+			"time",
+			"timeEnd",
+			"trace"
+		],
+		"no-inferrable-types": [
+			true,
+			"ignore-params"
+		],
+		"no-var-keyword": true,
 		"no-string-throw": true,
 		"no-unused-expression": true,
 		"no-duplicate-variable": true,
+		"no-trailing-whitespace": true,
+		"no-empty-interface": true,
+		"no-shadowed-variable": true,
+		"no-consecutive-blank-lines": true,
+		"no-construct": true,
+		"no-debugger": true,
+		"no-duplicate-super": true,
 		"curly": true,
 		"class-name": true,
 		"semicolon": [
 			true,
 			"always"
 		],
-		"triple-equals": true
+		"triple-equals": true,
+		"prefer-const": true,
+		"eofline": true,
+		"no-require-imports": true,
+		"arrow-return-shorthand": true,
+		"typedef-whitespace": [
+			true,
+			{
+				"call-signature": "nospace",
+				"index-signature": "nospace",
+				"parameter": "nospace",
+				"property-declaration": "nospace",
+				"variable-declaration": "nospace"
+			}
+		],
+		"unified-signatures": true,
+		"variable-name": false,
+		"whitespace": [
+			true,
+			"check-branch",
+			"check-decl",
+			"check-operator",
+			"check-separator",
+			"check-type"
+		]
 	},
 	"defaultSeverity": "warning"
 }
