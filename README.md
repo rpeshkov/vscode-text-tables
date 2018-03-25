@@ -1,5 +1,7 @@
 # Text Tables
 
+[![version][version-badge]][CHANGELOG]
+[![license][license-badge]][LICENSE]
 [![Build Status](https://travis-ci.org/rpeshkov/vscode-text-tables.svg?branch=master)](https://travis-ci.org/rpeshkov/vscode-text-tables)
 
 ![Text tables](icons/icon.png)
@@ -76,8 +78,7 @@ All contributions are welcome.
 
 If you found a bug or want to propose new feature for the extension, feel free to create an issue.
 
-## [License](LICENSE)
-
-The MIT License.
-
-Copyright (c) 2018 Roman Peshkov
+[CHANGELOG]: ./CHANGELOG.md
+[LICENSE]: ./LICENSE
+[version-badge]: https://img.shields.io/badge/version-0.0.1-blue.svg
+[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
