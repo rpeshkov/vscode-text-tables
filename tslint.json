@@ -70,7 +70,6 @@
 			"check-separator",
 			"check-type"
 		]
-
 	},
 	"defaultSeverity": "warning"
 }
