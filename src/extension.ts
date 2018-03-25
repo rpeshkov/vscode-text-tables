@@ -7,8 +7,8 @@ import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdo
 import { isUndefined } from 'util';
 
 enum TextTablesMode {
-    Org = "org",
-    Markdown = "markdown"
+    Org = 'org',
+    Markdown = 'markdown'
 }
 
 /**
