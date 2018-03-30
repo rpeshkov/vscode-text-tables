@@ -7,7 +7,6 @@
     ],
     "includePid": false,
     "reports": [
-        "json",
         "html",
         "lcov",
         "text-summary"

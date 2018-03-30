@@ -39,19 +39,14 @@ function _mkDirIfExists(dir: string): void {
 
 function _readCoverOptions(testsRoot: string): ITestRunnerOptions | undefined {
     const coverConfigPath = paths.join(testsRoot, '..', '..', 'coverconfig.json');
-    let coverConfig: ITestRunnerOptions;
     if (fs.existsSync(coverConfigPath)) {
         const configContent = fs.readFileSync(coverConfigPath, 'utf-8');
-        coverConfig = JSON.parse(configContent);
-        return coverConfig;
+        return JSON.parse(configContent);
     }
     return undefined;
 }
 
 function run(testsRoot: string, clb: any): any {
-    // Enable source map support
-    require('source-map-support').install();
-
     // Read configuration for the coverage file
     const coverOptions = _readCoverOptions(testsRoot);
     if (coverOptions && coverOptions.enabled) {
@@ -67,19 +62,14 @@ function run(testsRoot: string, clb: any): any {
         }
         try {
             // Fill into Mocha
-            files.forEach((f): Mocha => {
-                return mocha.addFile(paths.join(testsRoot, f));
-            });
+            files.forEach((f): Mocha => mocha.addFile(paths.join(testsRoot, f)));
             // Run the tests
             let failureCount = 0;
 
             mocha.run()
-                .on('fail', (): void => {
-                    failureCount++;
-                })
-                .on('end', (): void => {
-                    clb(undefined, failureCount);
-                });
+                .on('fail', () => failureCount++)
+                .on('end', () => clb(undefined, failureCount)
+            );
         } catch (error) {
             return clb(error);
         }
@@ -108,7 +98,6 @@ class CoverageRunner {
         if (!options.relativeSourcePath) {
             return;
         }
-
     }
 
     public setupCoverage(): void {
