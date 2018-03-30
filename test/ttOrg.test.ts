@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import { OrgParser } from '../ttOrg';
-import { RowType } from '../ttTable';
+import { OrgParser } from '../src/ttOrg';
+import { RowType } from '../src/ttTable';
 
 suite('Text tables. Org', () => {
     suite('Parser', () => {
