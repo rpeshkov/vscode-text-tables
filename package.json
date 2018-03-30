@@ -108,6 +108,11 @@
         "vscode": "^1.1.6",
         "tslint": "^5.8.0",
         "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+        "@types/mocha": "^5.0.0",
+        "@types/glob": "^5.0.35",
+        "istanbul": "^0.4.5",
+        "remap-istanbul": "^0.11.0",
+        "glob": "^7.1.2",
+        "decache": "^4.4.0"
     }
 }
