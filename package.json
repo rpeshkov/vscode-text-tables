@@ -28,7 +28,7 @@
         "onLanguage:markdown",
         "onLanguage:org"
     ],
-    "main": "./out/extension",
+    "main": "./out/src/extension",
     "contributes": {
         "commands": [
             {

@@ -107,14 +107,10 @@ export class TableNavigator {
     }
 
     previousCell(cursorPosition: vscode.Position): vscode.Position {
-        if (cursorPosition.character === 0) {
-            return cursorPosition.translate(0, 2);
-        }
-
         const charPos = cursorPosition.character;
         const colPos = this.getColumnsPosition();
         const colIndex = colPos.findIndex(x => charPos >= x.start && charPos < x.end);
-        if (colIndex === 0) {
+        if (colIndex <= 0) {
             return new vscode.Position(cursorPosition.line - 1, colPos[colPos.length - 1].start + 1);
         } else {
             return new vscode.Position(cursorPosition.line, colPos[colIndex - 1].start + 1);
