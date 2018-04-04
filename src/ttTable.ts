@@ -57,6 +57,10 @@ export class Table {
     }
 
     setAt(row: number, col: number, value: string) {
+        if (this.cols[col].width < value.length) {
+            this.cols[col].width = value.length;
+        }
+
         this.data[row][col] = value;
     }
 }
