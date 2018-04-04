@@ -5,19 +5,11 @@ import { OrgLocator, OrgParser, OrgStringifier  } from './ttOrg';
 import { Locator, Parser, Stringifier, TableNavigator, Table } from './ttTable';
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown';
 import { isUndefined } from 'util';
+import { registerContext, ContextType, enterContext, exitContext } from './context';
 
 enum TextTablesMode {
     Org = 'org',
     Markdown = 'markdown'
-}
-
-/**
- * Set editor context
- * @param context Context to set
- * @param state State of context
- */
-function setContext(context: string, state: boolean) {
-    vscode.commands.executeCommand('setContext', context, state);
 }
 
 let locator: Locator;
@@ -41,27 +33,18 @@ function loadConfiguration() {
 
 export function activate(ctx: vscode.ExtensionContext) {
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-
-    statusItem.text = '$(book) Table Mode: Off';
-    statusItem.show();
+    registerContext(ContextType.TableMode, '$(book) Table Mode', statusItem);
 
     loadConfiguration();
     vscode.workspace.onDidChangeConfiguration(() => loadConfiguration());
 
     // Enter table mode context
-    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOn',
-        () => {
-            setContext('tableMode', true);
-            statusItem.text = '$(book) Table Mode: On';
-        }));
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOn', () => enterContext(ContextType.TableMode)));
 
     // Exit table mode context
-    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOff',
-        () => {
-            setContext('tableMode', false);
-            statusItem.text = '$(book) Table Mode: Off';
-        }));
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOff', () => exitContext(ContextType.TableMode)));
 
+    // Jump to next cell
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.gotoNextCell', () => {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -74,6 +57,7 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
     }));
 
+    // Jump to previous cell
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.gotoPreviousCell', () => {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
