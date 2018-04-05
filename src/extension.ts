@@ -105,23 +105,23 @@ export function activate(ctx: vscode.ExtensionContext) {
 
             const match = x.match(re);
             if (match) {
-                const cols = +match[1];
-                const rows = +match[2];
-
-                const values = new Array(cols).fill('');
+                const cols = +match[1] || 1;
+                const rows = +match[2] || 2;
 
                 const table = new Table();
-                for (let i = 0; i < rows; i++) {
-                    table.addRow(RowType.Data, values);
+                for (let i = 0; i < rows + 1; i++) {
+                    const rowType = (i === 1)
+                        ? RowType.Separator
+                        : RowType.Data;
+
+                    table.addRow(rowType, new Array(cols).fill(''));
                 }
 
-                const prevSelection = editor.selection;
-                editor.edit(b => {
-                    b.replace(editor.selection, stringifier.stringify(table));
-                    editor.selection = prevSelection;
-                });
+                const currentPosition = editor.selection.start;
+                editor
+                    .edit(b => b.insert(currentPosition, stringifier.stringify(table)))
+                    .then(() => editor.selection = new vscode.Selection(currentPosition, currentPosition));
             }
-
         });
     }));
 }
