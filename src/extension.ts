@@ -1,8 +1,8 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { OrgLocator, OrgParser, OrgStringifier  } from './ttOrg';
-import { Locator, Parser, Stringifier, TableNavigator, Table } from './ttTable';
+import { OrgLocator, OrgParser, OrgStringifier } from './ttOrg';
+import { Locator, Parser, Stringifier, TableNavigator, Table, RowType } from './ttTable';
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown';
 import { isUndefined } from 'util';
 import { registerContext, ContextType, enterContext, exitContext } from './context';
@@ -76,6 +76,53 @@ export function activate(ctx: vscode.ExtensionContext) {
         if (editor) {
             formatAndGetTableUnderCursor(editor);
         }
+    }));
+
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.createTable', () => {
+        if (isUndefined(vscode.window.activeTextEditor)) {
+            vscode.window.showInformationMessage('Open editor first');
+            return;
+        }
+
+        const editor = vscode.window.activeTextEditor;
+
+        const re = /^(\d+)x(\d+)$/u;
+
+        const opts: vscode.InputBoxOptions = {
+            value: '5x2',
+            prompt: 'Table size Columns x Rows (e.g. 5x2)',
+            validateInput: (value: string) => {
+                if (!re.test(value)) {
+                    return 'Provided value is invalid. Please provide the value in format Columns x Rows (e.g. 5x2)';
+                }
+                return;
+            }
+        };
+        vscode.window.showInputBox(opts).then(x => {
+            if (!x) {
+                return;
+            }
+
+            const match = x.match(re);
+            if (match) {
+                const cols = +match[1] || 1;
+                const rows = +match[2] || 2;
+
+                const table = new Table();
+                for (let i = 0; i < rows + 1; i++) {
+                    const rowType = (i === 1)
+                        ? RowType.Separator
+                        : RowType.Data;
+
+                    table.addRow(rowType, new Array(cols).fill(''));
+                }
+
+                const currentPosition = editor.selection.start;
+                editor
+                    .edit(b => b.insert(currentPosition, stringifier.stringify(table)))
+                    .then(() => editor.selection = new vscode.Selection(currentPosition, currentPosition));
+            }
+        });
     }));
 }
 

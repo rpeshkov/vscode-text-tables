@@ -50,6 +50,10 @@
             {
                 "command": "text-tables.gotoPreviousCell",
                 "title": "Text Tables: Go to previous cell"
+            },
+            {
+                "command": "text-tables.createTable",
+                "title": "Text Tables: Create table"
             }
         ],
         "configuration": {
