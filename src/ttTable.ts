@@ -22,6 +22,11 @@ export interface ColDef {
 }
 
 export class Table {
+    /**
+     * Line where the table starts
+     */
+    startLine = 0;
+
     rows: RowDef[] = [];
     cols: ColDef[] = [];
 
@@ -88,41 +93,65 @@ interface Pos {
 }
 
 export class TableNavigator {
-    constructor(
-        public table: Table) { }
+    private cellRanges: vscode.Range[] = [];
+
+    constructor(public table: Table) {
+        this.buildCellRanges();
+    }
 
     nextCell(cursorPosition: vscode.Position): vscode.Position {
-        if (cursorPosition.character === 0) {
-            return cursorPosition.translate(0, 2);
+
+        for (let i = 0; i < this.cellRanges.length - 1; ++i) {
+            if (this.cellRanges[i].contains(cursorPosition)) {
+                return this.cellRanges[i + 1].start.translate(0, 2);
+            }
         }
 
-        const charPos = cursorPosition.character;
-        const colPos = this.getColumnsPosition();
-        const colIndex = colPos.findIndex(x => charPos >= x.start && charPos < x.end);
-        if (colIndex === this.table.cols.length - 1) {
-            return new vscode.Position(cursorPosition.line + 1, 2);
-        } else {
-            return new vscode.Position(cursorPosition.line, colPos[colIndex + 1].start + 1);
-        }
+        return new vscode.Position(this.table.startLine, 2);
     }
 
     previousCell(cursorPosition: vscode.Position): vscode.Position {
-        const charPos = cursorPosition.character;
-        const colPos = this.getColumnsPosition();
-        const colIndex = colPos.findIndex(x => charPos >= x.start && charPos < x.end);
-        if (colIndex <= 0) {
-            return new vscode.Position(cursorPosition.line - 1, colPos[colPos.length - 1].start + 1);
-        } else {
-            return new vscode.Position(cursorPosition.line, colPos[colIndex - 1].start + 1);
+        for (let i = 0; i < this.cellRanges.length - 1; ++i) {
+            if (this.cellRanges[i].contains(cursorPosition)) {
+                return this.cellRanges[i - 1].start.translate(0, 2);
+            }
         }
+
+        return new vscode.Position(this.table.startLine, 2);
     }
 
-    private getColumnsPosition(): Pos[] {
-        let counter = 1;
-        return this.table.cols.reduce((prev: Pos[], cur) => {
-            prev.push({start: counter, end: counter + cur.width + 2});
-            counter += cur.width + 3;
-            return prev;
-        }, []);
+    private buildCellRanges() {
+        this.cellRanges = [];
+
+        const cellPadding = 2;
+        const colBoundaries: number[] = [0];
+
+        for (let i = 0; i < this.table.cols.length; ++i) {
+            const col = this.table.cols[i];
+            colBoundaries.push((col.width + cellPadding + 1) + colBoundaries[colBoundaries.length - 1]);
+        }
+
+        // console.log(colBoundaries);
+
+        for (let i = 0; i < this.table.rows.length; ++i) {
+            const row = this.table.rows[i];
+            const rowLine = this.table.startLine + i;
+
+            if (row.type === RowType.Separator) {
+                // Extend last range on whole separator line
+                const lastRange = this.cellRanges.pop();
+                if (lastRange) {
+                    this.cellRanges.push(new vscode.Range(lastRange.start, lastRange.end.translate(1)));
+
+                }
+            } else {
+                for (let j = 0; j < colBoundaries.length - 1; ++j) {
+                    const start = new vscode.Position(rowLine, colBoundaries[j]);
+                    const end = new vscode.Position(rowLine, colBoundaries[j + 1] - 1);
+                    this.cellRanges.push(new vscode.Range(start, end));
+                }
+            }
+        }
+        // console.log(this.cellRanges);
     }
 }

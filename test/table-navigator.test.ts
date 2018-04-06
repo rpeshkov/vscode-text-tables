@@ -8,8 +8,10 @@ suite('TableNavigator', () => {
 
     setup(() => {
         table = new Table();
-        table.addRow(RowType.Data, ['Value1', 'Value2']);
-        table.addRow(RowType.Data, ['Value3', 'Value4']);
+        table.addRow(RowType.Data, ['Column 1', 'Column 2']);
+        table.addRow(RowType.Separator, ['', '']);
+        table.addRow(RowType.Data, ['1', '2']);
+        table.addRow(RowType.Data, ['3', '4']);
 
         navigator = new TableNavigator(table);
     });
@@ -30,20 +32,27 @@ suite('TableNavigator', () => {
             const pos = new vscode.Position(0, 2);
             const newPos = navigator.nextCell(pos);
             assert.equal(newPos.line, 0);
-            assert.equal(newPos.character, 11);
+            assert.equal(newPos.character, 13);
         });
 
         test('should jump to next row', () => {
-            const pos = new vscode.Position(0, 11);
+            const pos = new vscode.Position(2, 13);
             const newPos = navigator.nextCell(pos);
-            assert.equal(newPos.line, 1);
+            assert.equal(newPos.line, 3);
+            assert.equal(newPos.character, 2);
+        });
+
+        test('should skip separator row', () => {
+            const pos = new vscode.Position(0, 13);
+            const newPos = navigator.nextCell(pos);
+            assert.equal(newPos.line, 2);
             assert.equal(newPos.character, 2);
         });
     });
 
     suite('previousCell', () => {
         test('should navigate previous cell', () => {
-            const pos = new vscode.Position(0, 11);
+            const pos = new vscode.Position(0, 13);
             const newPos = navigator.previousCell(pos);
             assert.equal(newPos.line, 0);
             assert.equal(newPos.character, 2);
@@ -53,7 +62,7 @@ suite('TableNavigator', () => {
             const pos = new vscode.Position(1, 2);
             const newPos = navigator.previousCell(pos);
             assert.equal(newPos.line, 0);
-            assert.equal(newPos.character, 11);
+            assert.equal(newPos.character, 13);
         });
     });
 });
