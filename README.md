@@ -20,6 +20,7 @@ VSCode extension that brings the power of Emacs table editing.
 
 Extension provides several commands that are available in the Command Palette:
 
+- `Text Tables: Create table` - create new table in cursor position.
 - `Text Tables: Format under cursor` - reformat the table under cursor.
 - `Text Tables: Enter table mode` - enter [table mode](#table-mode).
 - `Text Tables: Exit table mode` - exit [table mode](#table-mode).
