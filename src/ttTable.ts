@@ -122,13 +122,22 @@ export class TableNavigator {
         if (jmp) {
             jmp = accessor(jmp);
             if (jmp) {
-                if (jmp.isSeparator && accessor(jmp)) {
+                if (jmp.isSeparator) {
+                    if (!accessor(jmp)) {
+                        return undefined;
+                    }
                     jmp = accessor(jmp);
                 }
                 return jmp.range.start.translate(0, 1);
             }
         }
-        return undefined;
+
+        // Maybe we're just outside left part of table? Let's move cursor a bit...
+        if (currentPosition.character === 0) {
+            return currentPosition.translate(0, 2);
+        } else {
+            return undefined;
+        }
     }
 
     private buildJumpPositions(): JumpPosition[] {
@@ -147,21 +156,21 @@ export class TableNavigator {
             const rowLine = this.table.startLine + i;
 
             if (row.type === RowType.Separator) {
-                const prevJmpPos = this.jumpPositions[this.jumpPositions.length - 1];
-                // Extend last range to whole separator line
-                if (prevJmpPos) {
-                    const start = prevJmpPos.range.end;
-                    const end = start.translate(1);
-                    const jmpPos = new JumpPosition(start, end, true, prevJmpPos);
-                    this.jumpPositions.push(jmpPos);
-                }
+                const prevJmpPos = result[result.length - 1];
+                // Extend last range to whole separator line or start from beginning of line
+                const start = prevJmpPos
+                    ? prevJmpPos.range.end
+                    : new vscode.Position(rowLine, 0);
+                const end = start.translate(1);
+                const jmpPos = new JumpPosition(start, end, true, prevJmpPos);
+                result.push(jmpPos);
             } else {
                 for (let j = 0; j < anchors.length - 1; ++j) {
-                    const prevJmpPos = this.jumpPositions[this.jumpPositions.length - 1];
+                    const prevJmpPos = result[result.length - 1];
                     const start = new vscode.Position(rowLine, anchors[j] + 1);
                     const end = new vscode.Position(rowLine, anchors[j + 1]);
                     const jmpPos = new JumpPosition(start, end, false, prevJmpPos);
-                    this.jumpPositions.push(jmpPos);
+                    result.push(jmpPos);
                 }
             }
         }

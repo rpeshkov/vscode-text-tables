@@ -152,6 +152,9 @@ function formatAndGetTableUnderCursor(editor: vscode.TextEditor): Table | undefi
     if (isUndefined(table)) {
         return undefined;
     }
+
+    table.startLine = tableRange.start.line;
+
     const newText = stringifier.stringify(table);
     editor.edit(b => b.replace(tableRange, newText));
     return table;

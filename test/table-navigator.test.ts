@@ -12,6 +12,7 @@ suite('TableNavigator', () => {
         table.addRow(RowType.Separator, ['', '']);
         table.addRow(RowType.Data, ['1', '2']);
         table.addRow(RowType.Data, ['3', '4']);
+        table.addRow(RowType.Separator, ['', '']);
 
         navigator = new TableNavigator(table);
     });
@@ -48,6 +49,18 @@ suite('TableNavigator', () => {
             const newPos = navigator.nextCell(pos);
             assert.equal(newPos!.line, 2);
             assert.equal(newPos!.character, 2);
+        });
+
+        test('should not move if cursor is on separator and it\'s the last line', () => {
+            const pos = new vscode.Position(4, 13);
+            const newPos = navigator.nextCell(pos);
+            assert.equal(newPos, undefined);
+        });
+
+        test('should not move if cursor in last cell and there is separator line below', () => {
+            const pos = new vscode.Position(3, 13);
+            const newPos = navigator.nextCell(pos);
+            assert.equal(newPos, undefined);
         });
     });
 
