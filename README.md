@@ -81,5 +81,5 @@ If you found a bug or want to propose new feature for the extension, feel free t
 
 [CHANGELOG]: ./CHANGELOG.md
 [LICENSE]: ./LICENSE
-[version-badge]: https://img.shields.io/badge/version-0.0.2-blue.svg
+[version-badge]: https://img.shields.io/badge/version-0.0.3-blue.svg
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg

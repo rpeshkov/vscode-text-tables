@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.3] - 2018-04-07
+
 ### Changed
 
 - Navigation now via `Tab` and `Shift`+`Tab` skips separator rows
@@ -26,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Initial release
 
-[Unreleased]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/rpeshkov/vscode-text-tables/releases/tag/v0.0.1
