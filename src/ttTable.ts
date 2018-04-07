@@ -87,49 +87,52 @@ export interface LineReader {
     lineCount: number;
 }
 
-interface CellRange {
-    isSeparator: boolean;
+class JumpPosition {
+    constructor(start: vscode.Position, end: vscode.Position, public isSeparator: boolean, prev?: JumpPosition) {
+        this.range = new vscode.Range(start, end);
+
+        if (prev) {
+            prev.next = this;
+            this.prev = prev;
+        }
+    }
+
     range: vscode.Range;
+    next?: JumpPosition;
+    prev?: JumpPosition;
 }
 
 export class TableNavigator {
-    private cellRanges: CellRange[] = [];
+    private jumpPositions: JumpPosition[] = [];
 
     constructor(public table: Table) {
-        this.buildCellRanges();
+        this.jumpPositions = this.buildJumpPositions();
     }
 
-    nextCell(cursorPosition: vscode.Position): vscode.Position {
-        let resultRange = this.cellRanges[this.cellRanges.length - 1];
+    nextCell(cursorPosition: vscode.Position): vscode.Position | undefined {
+        return this.jump(cursorPosition, x => x.next!);
+    }
 
-        for (let i = 0; i < this.cellRanges.length - 1; ++i) {
-            const thisRange = this.cellRanges[i];
-            if (thisRange.range.contains(cursorPosition)) {
-                const offset = this.cellRanges[i + 1].isSeparator ? 2 : 1;
-                resultRange = this.cellRanges[i + offset];
+    previousCell(cursorPosition: vscode.Position): vscode.Position | undefined {
+        return this.jump(cursorPosition, x => x.prev!);
+    }
+
+    private jump(currentPosition: vscode.Position, accessor: (x: JumpPosition) => JumpPosition): vscode.Position | undefined {
+        let jmp = this.jumpPositions.find(x => x.range.contains(currentPosition));
+        if (jmp) {
+            jmp = accessor(jmp);
+            if (jmp) {
+                if (jmp.isSeparator && accessor(jmp)) {
+                    jmp = accessor(jmp);
+                }
+                return jmp.range.start.translate(0, 1);
             }
         }
-
-        return resultRange.range.start.translate(0, 1);
+        return undefined;
     }
 
-    previousCell(cursorPosition: vscode.Position): vscode.Position {
-
-        let resultRange = this.cellRanges[0];
-
-        for (let i = this.cellRanges.length - 1; i > 1; --i) {
-            const r = this.cellRanges[i];
-            if (r.range.contains(cursorPosition)) {
-                const offset = this.cellRanges[i - 1].isSeparator ? 2 : 1;
-                resultRange = this.cellRanges[i - offset];
-
-            }
-        }
-        return resultRange.range.start.translate(0, 1);
-    }
-
-    private buildCellRanges() {
-        this.cellRanges = [];
+    private buildJumpPositions(): JumpPosition[] {
+        const result: JumpPosition[] = [];
 
         const cellPadding = 2;
         let lastAnchor = 0;
@@ -144,24 +147,24 @@ export class TableNavigator {
             const rowLine = this.table.startLine + i;
 
             if (row.type === RowType.Separator) {
+                const prevJmpPos = this.jumpPositions[this.jumpPositions.length - 1];
                 // Extend last range to whole separator line
-                const lastRange = this.cellRanges[this.cellRanges.length - 1];
-                if (lastRange) {
-                    this.cellRanges.push({
-                        isSeparator: true,
-                        range: new vscode.Range(lastRange.range.end, lastRange.range.end.translate(1))
-                    });
+                if (prevJmpPos) {
+                    const start = prevJmpPos.range.end;
+                    const end = start.translate(1);
+                    const jmpPos = new JumpPosition(start, end, true, prevJmpPos);
+                    this.jumpPositions.push(jmpPos);
                 }
             } else {
                 for (let j = 0; j < anchors.length - 1; ++j) {
+                    const prevJmpPos = this.jumpPositions[this.jumpPositions.length - 1];
                     const start = new vscode.Position(rowLine, anchors[j] + 1);
                     const end = new vscode.Position(rowLine, anchors[j + 1]);
-                    this.cellRanges.push({
-                        isSeparator: false,
-                        range: new vscode.Range(start, end)
-                    });
+                    const jmpPos = new JumpPosition(start, end, false, prevJmpPos);
+                    this.jumpPositions.push(jmpPos);
                 }
             }
         }
+        return result;
     }
 }

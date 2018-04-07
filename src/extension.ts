@@ -52,7 +52,10 @@ export function activate(ctx: vscode.ExtensionContext) {
             if (table) {
                 const nav = new TableNavigator(table);
                 const newPos = nav.nextCell(editor.selection.start);
-                editor.selection = new vscode.Selection(newPos, newPos);
+                if (newPos) {
+                    editor.selection = new vscode.Selection(newPos, newPos);
+                }
+
             }
         }
     }));
@@ -65,7 +68,9 @@ export function activate(ctx: vscode.ExtensionContext) {
             if (table) {
                 const nav = new TableNavigator(table);
                 const newPos = nav.previousCell(editor.selection.start);
-                editor.selection = new vscode.Selection(newPos, newPos);
+                if (newPos) {
+                    editor.selection = new vscode.Selection(newPos, newPos);
+                }
             }
         }
     }));
