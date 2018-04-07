@@ -22,6 +22,11 @@ export interface ColDef {
 }
 
 export class Table {
+    /**
+     * Line where the table starts
+     */
+    startLine = 0;
+
     rows: RowDef[] = [];
     cols: ColDef[] = [];
 
@@ -82,47 +87,93 @@ export interface LineReader {
     lineCount: number;
 }
 
-interface Pos {
-    start: number;
-    end: number;
+class JumpPosition {
+    constructor(start: vscode.Position, end: vscode.Position, public isSeparator: boolean, prev?: JumpPosition) {
+        this.range = new vscode.Range(start, end);
+
+        if (prev) {
+            prev.next = this;
+            this.prev = prev;
+        }
+    }
+
+    range: vscode.Range;
+    next?: JumpPosition;
+    prev?: JumpPosition;
 }
 
 export class TableNavigator {
-    constructor(
-        public table: Table) { }
+    private jumpPositions: JumpPosition[] = [];
 
-    nextCell(cursorPosition: vscode.Position): vscode.Position {
-        if (cursorPosition.character === 0) {
-            return cursorPosition.translate(0, 2);
+    constructor(public table: Table) {
+        this.jumpPositions = this.buildJumpPositions();
+    }
+
+    nextCell(cursorPosition: vscode.Position): vscode.Position | undefined {
+        return this.jump(cursorPosition, x => x.next!);
+    }
+
+    previousCell(cursorPosition: vscode.Position): vscode.Position | undefined {
+        return this.jump(cursorPosition, x => x.prev!);
+    }
+
+    private jump(currentPosition: vscode.Position, accessor: (x: JumpPosition) => JumpPosition): vscode.Position | undefined {
+        let jmp = this.jumpPositions.find(x => x.range.contains(currentPosition));
+        if (jmp) {
+            jmp = accessor(jmp);
+            if (jmp) {
+                if (jmp.isSeparator) {
+                    if (!accessor(jmp)) {
+                        return undefined;
+                    }
+                    jmp = accessor(jmp);
+                }
+                return jmp.range.start.translate(0, 1);
+            }
         }
 
-        const charPos = cursorPosition.character;
-        const colPos = this.getColumnsPosition();
-        const colIndex = colPos.findIndex(x => charPos >= x.start && charPos < x.end);
-        if (colIndex === this.table.cols.length - 1) {
-            return new vscode.Position(cursorPosition.line + 1, 2);
+        // Maybe we're just outside left part of table? Let's move cursor a bit...
+        if (currentPosition.character === 0) {
+            return currentPosition.translate(0, 2);
         } else {
-            return new vscode.Position(cursorPosition.line, colPos[colIndex + 1].start + 1);
+            return undefined;
         }
     }
 
-    previousCell(cursorPosition: vscode.Position): vscode.Position {
-        const charPos = cursorPosition.character;
-        const colPos = this.getColumnsPosition();
-        const colIndex = colPos.findIndex(x => charPos >= x.start && charPos < x.end);
-        if (colIndex <= 0) {
-            return new vscode.Position(cursorPosition.line - 1, colPos[colPos.length - 1].start + 1);
-        } else {
-            return new vscode.Position(cursorPosition.line, colPos[colIndex - 1].start + 1);
-        }
-    }
+    private buildJumpPositions(): JumpPosition[] {
+        const result: JumpPosition[] = [];
 
-    private getColumnsPosition(): Pos[] {
-        let counter = 1;
-        return this.table.cols.reduce((prev: Pos[], cur) => {
-            prev.push({start: counter, end: counter + cur.width + 2});
-            counter += cur.width + 3;
-            return prev;
-        }, []);
+        const cellPadding = 2;
+        let lastAnchor = 0;
+        const anchors = this.table.cols.reduce((accum, col) => {
+            lastAnchor += col.width + cellPadding + 1;
+            accum.push(lastAnchor);
+            return accum;
+        }, [lastAnchor]);
+
+        for (let i = 0; i < this.table.rows.length; ++i) {
+            const row = this.table.rows[i];
+            const rowLine = this.table.startLine + i;
+
+            if (row.type === RowType.Separator) {
+                const prevJmpPos = result[result.length - 1];
+                // Extend last range to whole separator line or start from beginning of line
+                const start = prevJmpPos
+                    ? prevJmpPos.range.end
+                    : new vscode.Position(rowLine, 0);
+                const end = start.translate(1);
+                const jmpPos = new JumpPosition(start, end, true, prevJmpPos);
+                result.push(jmpPos);
+            } else {
+                for (let j = 0; j < anchors.length - 1; ++j) {
+                    const prevJmpPos = result[result.length - 1];
+                    const start = new vscode.Position(rowLine, anchors[j] + 1);
+                    const end = new vscode.Position(rowLine, anchors[j + 1]);
+                    const jmpPos = new JumpPosition(start, end, false, prevJmpPos);
+                    result.push(jmpPos);
+                }
+            }
+        }
+        return result;
     }
 }
