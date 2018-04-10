@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Setting `text-tables.showStatus` to control whether status item for mode should be visible.
+
 ## [0.0.3] - 2018-04-07
 
 ### Changed
