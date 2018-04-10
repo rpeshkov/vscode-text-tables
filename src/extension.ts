@@ -13,8 +13,7 @@ let parser: Parser;
 let stringifier: Stringifier;
 
 function loadConfiguration() {
-    const config = vscode.workspace.getConfiguration(configuration.Section);
-    const mode = config.get<string>(configuration.ModeKey, configuration.Mode.Markdown);
+    const mode = configuration.get<string>(configuration.modeKey, configuration.Mode.Markdown);
 
     if (mode === configuration.Mode.Org) {
         locator = new OrgLocator();
@@ -31,7 +30,7 @@ export function activate(ctx: vscode.ExtensionContext) {
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
     registerContext(ContextType.TableMode, '$(book) Table Mode', statusItem);
 
-    if (vscode.workspace.getConfiguration(configuration.Section)[configuration.ShowStatusKey]) {
+    if (configuration.get(configuration.showStatusKey, true)) {
         statusItem.show();
     }
 
@@ -39,7 +38,7 @@ export function activate(ctx: vscode.ExtensionContext) {
     vscode.workspace.onDidChangeConfiguration(() => {
         loadConfiguration();
 
-        if (vscode.workspace.getConfiguration(configuration.Section)[configuration.ShowStatusKey]) {
+        if (configuration.get(configuration.showStatusKey, true)) {
             statusItem.show();
         } else {
             statusItem.hide();
