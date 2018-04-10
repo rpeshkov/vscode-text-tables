@@ -37,7 +37,7 @@ class Context {
         if (this.statusItem) {
             const stateText = isEnabled ? 'On' : 'Off';
             this.statusItem.text = `${this.title}: ${stateText}`;
-            this.statusItem.show();
+
         }
     }
 }

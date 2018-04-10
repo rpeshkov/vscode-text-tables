@@ -6,21 +6,17 @@ import { Locator, Parser, Stringifier, TableNavigator, Table, RowType } from './
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown';
 import { isUndefined } from 'util';
 import { registerContext, ContextType, enterContext, exitContext } from './context';
-
-enum TextTablesMode {
-    Org = 'org',
-    Markdown = 'markdown'
-}
+import * as configuration from './configuration';
 
 let locator: Locator;
 let parser: Parser;
 let stringifier: Stringifier;
 
 function loadConfiguration() {
-    const config = vscode.workspace.getConfiguration('text-tables');
-    const mode = config.get<string>('mode', TextTablesMode.Markdown);
+    const config = vscode.workspace.getConfiguration(configuration.Section);
+    const mode = config.get<string>(configuration.ModeKey, configuration.Mode.Markdown);
 
-    if (mode === TextTablesMode.Org) {
+    if (mode === configuration.Mode.Org) {
         locator = new OrgLocator();
         parser = new OrgParser();
         stringifier = new OrgStringifier();
@@ -35,8 +31,20 @@ export function activate(ctx: vscode.ExtensionContext) {
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
     registerContext(ContextType.TableMode, '$(book) Table Mode', statusItem);
 
+    if (vscode.workspace.getConfiguration(configuration.Section)[configuration.ShowStatusKey]) {
+        statusItem.show();
+    }
+
     loadConfiguration();
-    vscode.workspace.onDidChangeConfiguration(() => loadConfiguration());
+    vscode.workspace.onDidChangeConfiguration(() => {
+        loadConfiguration();
+
+        if (vscode.workspace.getConfiguration(configuration.Section)[configuration.ShowStatusKey]) {
+            statusItem.show();
+        } else {
+            statusItem.hide();
+        }
+    });
 
     // Enter table mode context
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOn', () => enterContext(ContextType.TableMode)));
