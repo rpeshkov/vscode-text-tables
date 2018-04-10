@@ -69,6 +69,12 @@
                     "default": "markdown",
                     "description": "Sets the mode in which extension should work",
                     "scope": "window"
+                },
+                "text-tables.showStatus": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show table mode status bar item",
+                    "scope": "window"
                 }
             }
         },
