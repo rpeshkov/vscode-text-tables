@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Command `text-tables.enable` (`Text Tables: Enable` in command pallete) for activating extension in any file.
+- Command `text-tables.clearCell` (`Text Tables: Clear cell` in command pallete) for clearing cell under cursor.
 
 ## [0.0.4] - 2018-04-11
 
