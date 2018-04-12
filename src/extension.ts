@@ -56,6 +56,26 @@ export function activate(ctx: vscode.ExtensionContext) {
     // Exit table mode context
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOff', () => exitContext(ContextType.TableMode)));
 
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.clearCell', () => {
+        const editor = vscode.window.activeTextEditor!;
+        const document = editor.document;
+        const currentLineNumber = editor.selection.start.line;
+        const currentLine = document.lineAt(currentLineNumber);
+
+        const leftSepPosition = currentLine.text.lastIndexOf('|', editor.selection.start.character - 1);
+        let rightSepPosition = currentLine.text.indexOf('|', editor.selection.start.character);
+        if (rightSepPosition < 0) {
+            rightSepPosition = currentLine.range.end.character;
+        }
+
+        editor.edit(e => {
+            const r = new vscode.Range(currentLineNumber, leftSepPosition + 1, currentLineNumber, rightSepPosition);
+            e.replace(r, ' '.repeat(rightSepPosition - leftSepPosition - 1));
+        });
+        const newPos = new vscode.Position(currentLineNumber, leftSepPosition + 2);
+        editor.selection = new vscode.Selection(newPos, newPos);
+    }));
+
     // Jump to next cell
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.gotoNextCell', () => {
         const editor = vscode.window.activeTextEditor;

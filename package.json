@@ -59,6 +59,10 @@
             {
                 "command": "text-tables.createTable",
                 "title": "Text Tables: Create table"
+            },
+            {
+                "command": "text-tables.clearCell",
+                "title": "Text Tables: Clear cell"
             }
         ],
         "configuration": {
@@ -87,6 +91,10 @@
             {
                 "command": "text-tables.formatUnderCursor",
                 "key": "ctrl+q ctrl+f"
+            },
+            {
+                "command": "text-tables.clearCell",
+                "key": "ctrl+q space"
             },
             {
                 "command": "text-tables.tableModeOn",
