@@ -50,6 +50,7 @@ When in table mode, <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keybindin
 ## Keybindings
 
 - <kbd>Ctrl</kbd>+<kbd>q</kbd> <kbd>f</kbd> - format table under cursor.
+- <kbd>Ctrl</kbd>+<kbd>q</kbd> <kbd>space</kbd> - clear cell under cursor.
 - <kbd>Ctrl</kbd>+<kbd>q</kbd> <kbd>Ctrl</kbd>+<kbd>q</kbd> - toggle table mode.
 
 ### In table mode
@@ -88,5 +89,5 @@ If you found a bug or want to propose new feature for the extension, feel free t
 
 [CHANGELOG]: ./CHANGELOG.md
 [LICENSE]: ./LICENSE
-[version-badge]: https://img.shields.io/badge/version-0.0.5-blue.svg
+[version-badge]: https://img.shields.io/badge/version-0.0.6-blue.svg
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
