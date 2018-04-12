@@ -45,6 +45,11 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
     });
 
+    // Command for manually enabling extension
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.enable', () => {
+        vscode.window.showInformationMessage('Text tables enabled!');
+    }));
+
     // Enter table mode context
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOn', () => enterContext(ContextType.TableMode)));
 

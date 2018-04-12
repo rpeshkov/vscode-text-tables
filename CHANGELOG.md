@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Command `text-tables.enable` (`Text Tables: Enable` in command pallete) for activating extension in any file.
+
 ## [0.0.4] - 2018-04-11
 
 ### Added

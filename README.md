@@ -16,10 +16,15 @@ VSCode extension that brings the power of Emacs table editing.
 - Easy table cells navigation
 - Support for [org](https://orgmode.org/manual/Built_002din-table-editor.html#Built_002din-table-editor) and [markdown](https://help.github.com/articles/organizing-information-with-tables/) tables
 
+## Activation
+
+Extension is automatically activated when you open markdown or org file. If you want to use this extension in any other file, just trigger `Text Tables: Enable` command in command pallete.
+
 ## Commands
 
 Extension provides several commands that are available in the Command Palette:
 
+- `Text Tables: Enable` - enable extension.
 - `Text Tables: Create table` - create new table in cursor position.
 - `Text Tables: Format under cursor` - reformat the table under cursor.
 - `Text Tables: Enter table mode` - enter [table mode](#table-mode).
