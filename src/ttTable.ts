@@ -72,6 +72,7 @@ export class Table {
 
 export interface Parser {
     parse(text: string): Table | undefined;
+    isSeparatorRow(text: string): boolean;
 }
 
 export interface Stringifier {

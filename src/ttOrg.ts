@@ -17,7 +17,7 @@ export class OrgParser implements tt.Parser {
         const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
 
         for (const s of strings) {
-            if (s.length > 1 && s[1] === horizontalSeparator) {
+            if (this.isSeparatorRow(s)) {
                 result.addRow(tt.RowType.Separator, []);
                 continue;
             }
@@ -32,6 +32,10 @@ export class OrgParser implements tt.Parser {
         }
 
         return result;
+    }
+
+    isSeparatorRow(text: string): boolean {
+        return text.length > 1 && text[1] === horizontalSeparator;
     }
 }
 

@@ -18,7 +18,7 @@ export class MarkdownParser implements tt.Parser {
         for (const s of strings) {
             const cleanedString = s.replace(/\s+/g, '');
 
-            if (cleanedString.startsWith('|-') || cleanedString.startsWith('|:-')) {
+            if (this.isSeparatorRow(cleanedString)) {
                 result.addRow(tt.RowType.Separator, []);
                 result.cols.forEach(x => x.width = Math.max(x.width, 3));
                 const startIndex = cleanedString.startsWith(verticalSeparator) ? 1 : 0;
@@ -60,6 +60,11 @@ export class MarkdownParser implements tt.Parser {
         }
 
         return result;
+    }
+
+    isSeparatorRow(text: string): boolean {
+        const cleaned = text.replace(/\s+/g, '');
+        return cleaned.startsWith('|-') || cleaned.startsWith('|:-')
     }
 }
 
