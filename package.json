@@ -26,11 +26,16 @@
     ],
     "activationEvents": [
         "onLanguage:markdown",
-        "onLanguage:org"
+        "onLanguage:org",
+        "onCommand:text-tables.enable"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [
+            {
+                "command": "text-tables.enable",
+                "title": "Text Tables: Enable"
+            },
             {
                 "command": "text-tables.formatUnderCursor",
                 "title": "Text Tables: Format under cursor"
