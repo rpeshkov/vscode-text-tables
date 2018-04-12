@@ -31,6 +31,7 @@ Extension provides several commands that are available in the Command Palette:
 - `Text Tables: Exit table mode` - exit [table mode](#table-mode).
 - `Text Tables: Go to next cell` - switch to next cell in current table.
 - `Text Tables: Go to previous cell` - switch to previous cell in current table.
+- `Text Tables: Clear cell` - clear cell under cursor.
 
 You can access all of the above commands from the command pallete (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd> or <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd>)
 
