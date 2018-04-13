@@ -16,20 +16,20 @@ export function registerContext(type: ContextType, title: string, statusItem?: v
 export function enterContext(editor: vscode.TextEditor, type: ContextType) {
     const ctx = contexts.get(type);
     if (ctx) {
-        const editorState = state.get(editor.document.fileName) || [];
         ctx.setState(true);
-        editorState.push(type);
-        state.set(editor.document.fileName, editorState);
+
+        const editorState = state.get(editor.document.fileName) || [];
+        state.set(editor.document.fileName, editorState.concat(type));
     }
 }
 
 export function exitContext(editor: vscode.TextEditor, type: ContextType) {
     const ctx = contexts.get(type);
     if (ctx) {
-        let editorState = state.get(editor.document.fileName) || [];
         ctx.setState(false);
-        editorState = editorState.filter(x => x !== type);
-        state.set(editor.document.fileName, editorState);
+
+        const editorState = state.get(editor.document.fileName) || [];
+        state.set(editor.document.fileName, editorState.filter(x => x !== type));
     }
 }
 

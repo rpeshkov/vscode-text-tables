@@ -58,11 +58,19 @@ export function activate(ctx: vscode.ExtensionContext) {
 
     // Enter table mode context
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOn',
-        () => enterContext(vscode.window.activeTextEditor!, ContextType.TableMode)));
+        () => {
+            if (vscode.window.activeTextEditor) {
+                enterContext(vscode.window.activeTextEditor!, ContextType.TableMode);
+            }
+        }));
 
     // Exit table mode context
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOff',
-        () => exitContext(vscode.window.activeTextEditor!, ContextType.TableMode)));
+        () => {
+            if (vscode.window.activeTextEditor) {
+                exitContext(vscode.window.activeTextEditor!, ContextType.TableMode);
+            }
+        }));
 
     // Clear cell under cursor
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.clearCell', () => {
