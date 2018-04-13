@@ -5,7 +5,7 @@ import { OrgLocator, OrgParser, OrgStringifier } from './ttOrg';
 import { Locator, Parser, Stringifier, TableNavigator, Table, RowType } from './ttTable';
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown';
 import { isUndefined } from 'util';
-import { registerContext, ContextType, enterContext, exitContext } from './context';
+import { registerContext, ContextType, enterContext, exitContext, restoreContext } from './context';
 import * as configuration from './configuration';
 
 let locator: Locator;
@@ -45,16 +45,32 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
     });
 
+    vscode.window.onDidChangeActiveTextEditor(e => {
+        if (e) {
+            restoreContext(e);
+        }
+    });
+
     // Command for manually enabling extension
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.enable', () => {
         vscode.window.showInformationMessage('Text tables enabled!');
     }));
 
     // Enter table mode context
-    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOn', () => enterContext(ContextType.TableMode)));
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOn',
+        () => {
+            if (vscode.window.activeTextEditor) {
+                enterContext(vscode.window.activeTextEditor!, ContextType.TableMode);
+            }
+        }));
 
     // Exit table mode context
-    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOff', () => exitContext(ContextType.TableMode)));
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.tableModeOff',
+        () => {
+            if (vscode.window.activeTextEditor) {
+                exitContext(vscode.window.activeTextEditor!, ContextType.TableMode);
+            }
+        }));
 
     // Clear cell under cursor
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.clearCell', () => {
