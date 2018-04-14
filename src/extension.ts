@@ -51,6 +51,125 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
     });
 
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.moveRowDown', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const table = formatAndGetTableUnderCursor(editor);
+            if (table) {
+                const rowNum = editor.selection.end.line - table.startLine;
+                if (rowNum >= table.rows.length - 1) {
+                    vscode.window.showWarningMessage('Cannot move row further');
+                    return;
+                }
+                vscode.commands.executeCommand('editor.action.moveLinesDownAction');
+            }
+        }
+    }));
+
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.moveRowUp', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const table = formatAndGetTableUnderCursor(editor);
+            if (table) {
+                const rowNum = editor.selection.start.line - table.startLine;
+                if (rowNum <= 0) {
+                    vscode.window.showWarningMessage('Cannot move row further');
+                    return;
+                }
+                vscode.commands.executeCommand('editor.action.moveLinesUpAction');
+            }
+        }
+    }));
+
+    // Columns move
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.moveColRight', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const tableRange = locator.locate(editor.document, editor.selection.start.line);
+
+            if (isUndefined(tableRange)) {
+                return;
+            }
+            const selectedText = editor.document.getText(tableRange);
+            const table = parser.parse(selectedText);
+
+            if (isUndefined(table)) {
+                return;
+            }
+
+            table.startLine = tableRange.start.line;
+
+            const rowCol = rowColFromPosition(table, editor.selection.start);
+            if (rowCol.col < 0) {
+                vscode.window.showWarningMessage('Not in table data field');
+                return;
+            }
+
+            if (rowCol.col >= table.cols.length - 1 ) {
+                vscode.window.showWarningMessage('Cannot move column further right');
+                return;
+            }
+
+            [table.cols[rowCol.col], table.cols[rowCol.col + 1]] = [table.cols[rowCol.col + 1], table.cols[rowCol.col]];
+
+            table.rows.forEach((_, i) => {
+                const v1 = table.getAt(i, rowCol.col);
+                const v2 = table.getAt(i, rowCol.col + 1);
+                table.setAt(i, rowCol.col + 1, v1);
+                table.setAt(i, rowCol.col, v2);
+            });
+
+            const newText = stringifier.stringify(table);
+            editor
+                .edit(b => b.replace(tableRange, newText))
+                .then(() => vscode.commands.executeCommand('text-tables.gotoNextCell'));
+        }
+    }));
+
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.moveColLeft', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const tableRange = locator.locate(editor.document, editor.selection.start.line);
+
+            if (isUndefined(tableRange)) {
+                return;
+            }
+            const selectedText = editor.document.getText(tableRange);
+            const table = parser.parse(selectedText);
+
+            if (isUndefined(table)) {
+                return;
+            }
+
+            table.startLine = tableRange.start.line;
+
+            const rowCol = rowColFromPosition(table, editor.selection.start);
+            if (rowCol.col < 0) {
+                vscode.window.showWarningMessage('Not in table data field');
+                return;
+            }
+
+            if (rowCol.col === 0) {
+                vscode.window.showWarningMessage('Cannot move column further left');
+                return;
+            }
+
+            [table.cols[rowCol.col], table.cols[rowCol.col - 1]] = [table.cols[rowCol.col - 1], table.cols[rowCol.col]];
+
+            table.rows.forEach((_, i) => {
+                const v1 = table.getAt(i, rowCol.col);
+                const v2 = table.getAt(i, rowCol.col - 1);
+                table.setAt(i, rowCol.col - 1, v1);
+                table.setAt(i, rowCol.col, v2);
+            });
+
+            const newText = stringifier.stringify(table);
+            editor
+                .edit(b => b.replace(tableRange, newText))
+                .then(() => vscode.commands.executeCommand('text-tables.gotoPreviousCell'));
+        }
+    }));
+
     // Command for manually enabling extension
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.enable', () => {
         vscode.window.showInformationMessage('Text tables enabled!');
@@ -195,6 +314,24 @@ export function activate(ctx: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
+}
+
+function rowColFromPosition(table: Table, position: vscode.Position): { row: number, col: number } {
+    const result = { row: -1, col: -1 };
+
+    result.row = position.line - table.startLine;
+    let counter = 1;
+    for (let i = 0; i < table.cols.length; ++i) {
+        const col = table.cols[i];
+        if (position.character >= counter && position.character < counter + col.width + 3) {
+            result.col = i;
+            break;
+        }
+
+        counter += col.width + 3;
+    }
+
+    return result;
 }
 
 /**
