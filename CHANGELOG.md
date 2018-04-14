@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Command `Move row down` to move row down in table mode.
+- Command `Move row up` to move row up in table mode.
+- Command `Move column right` to move column right in table mode.
+- Command `Move column left` to move column left in table mode.
+
 ## [0.0.8] - 2018-04-14
 
 ### Changed
