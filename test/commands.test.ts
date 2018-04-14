@@ -6,6 +6,15 @@ import * as cmd from '../src/commands';
 import { MarkdownStringifier } from '../src/ttMarkdown';
 import { OrgStringifier } from '../src/ttOrg';
 
+function inTextEditor(options: { language?: string; content?: string; },
+    cb: (editor: vscode.TextEditor, document: vscode.TextDocument) => void) {
+    vscode.workspace.openTextDocument(options).then((d) => {
+        vscode.window.showTextDocument(d).then(() => {
+            cb(vscode.window.activeTextEditor!, d);
+        });
+    });
+}
+
 suite.only('Commands', () => {
     test('Test "Create table" for markdown', (done) => {
         const config = cfg.build({'mode': cfg.Mode.Markdown});
@@ -14,12 +23,10 @@ suite.only('Commands', () => {
 | --- | --- |
 |     |     |`;
 
-        vscode.workspace.openTextDocument({language: 'markdown', content: ''}).then((d) => {
-            vscode.window.showTextDocument(d).then(() => {
-                cmd.createTable(2, 2, vscode.window.activeTextEditor!, config, new MarkdownStringifier()).then(() => {
-                    assert.equal(d.getText(), expectedResult);
-                    done();
-                });
+        inTextEditor({language: 'markdown'}, (editor, document) => {
+            cmd.createTable(2, 2, editor, config, new MarkdownStringifier()).then(() => {
+                assert.equal(document.getText(), expectedResult);
+                done();
             });
         });
     });
@@ -31,12 +38,10 @@ suite.only('Commands', () => {
 |--+--|
 |  |  |`;
 
-        vscode.workspace.openTextDocument({language: 'org', content: ''}).then((d) => {
-            vscode.window.showTextDocument(d).then(() => {
-                cmd.createTable(2, 2, vscode.window.activeTextEditor!, config, new OrgStringifier()).then(() => {
-                    assert.equal(d.getText(), expectedResult);
-                    done();
-                });
+        inTextEditor({language: 'org'}, (editor, document) => {
+            cmd.createTable(2, 2, editor, config, new OrgStringifier()).then(() => {
+                assert.equal(document.getText(), expectedResult);
+                done();
             });
         });
     });
