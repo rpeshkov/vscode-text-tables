@@ -1,21 +1,24 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import * as utils from './utils';
+import * as cmd from './commands';
 import { OrgLocator, OrgParser, OrgStringifier } from './ttOrg';
-import { Locator, Parser, Stringifier, TableNavigator, Table, RowType } from './ttTable';
+import { Locator, Parser, Stringifier, TableNavigator, Table } from './ttTable';
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown';
 import { isUndefined } from 'util';
 import { registerContext, ContextType, enterContext, exitContext, restoreContext } from './context';
-import * as configuration from './configuration';
+import * as cfg from './configuration';
 
 let locator: Locator;
 let parser: Parser;
 let stringifier: Stringifier;
+let configuration: cfg.Configuration;
 
 function loadConfiguration() {
-    const mode = configuration.get<string>(configuration.modeKey, configuration.Mode.Markdown);
+    configuration = cfg.build();
 
-    if (mode === configuration.Mode.Org) {
+    if (configuration.mode === cfg.Mode.Org) {
         locator = new OrgLocator();
         parser = new OrgParser();
         stringifier = new OrgStringifier();
@@ -27,18 +30,19 @@ function loadConfiguration() {
 }
 
 export function activate(ctx: vscode.ExtensionContext) {
+    loadConfiguration();
+
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
     registerContext(ContextType.TableMode, '$(book) Table Mode', statusItem);
 
-    if (configuration.get(configuration.showStatusKey, true)) {
+    if (configuration.showStatus) {
         statusItem.show();
     }
 
-    loadConfiguration();
     vscode.workspace.onDidChangeConfiguration(() => {
         loadConfiguration();
 
-        if (configuration.get(configuration.showStatusKey, true)) {
+        if (configuration.showStatus) {
             statusItem.show();
         } else {
             statusItem.hide();
@@ -260,54 +264,28 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
     }));
 
-    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.createTable', () => {
-        if (isUndefined(vscode.window.activeTextEditor)) {
-            vscode.window.showInformationMessage('Open editor first');
-            return;
-        }
-
-        const editor = vscode.window.activeTextEditor;
-
-        const re = /^(\d+)x(\d+)$/u;
-
+    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.createTable', editor => {
         const opts: vscode.InputBoxOptions = {
             value: '5x2',
             prompt: 'Table size Columns x Rows (e.g. 5x2)',
             validateInput: (value: string) => {
-                if (!re.test(value)) {
+                if (!utils.tableSizeRe.test(value)) {
                     return 'Provided value is invalid. Please provide the value in format Columns x Rows (e.g. 5x2)';
                 }
                 return;
             }
         };
+
         vscode.window.showInputBox(opts).then(x => {
             if (!x) {
                 return;
             }
 
-            const match = x.match(re);
+            const match = x.match(utils.tableSizeRe);
             if (match) {
                 const cols = +match[1] || 1;
                 const rows = +match[2] || 2;
-
-                const table = new Table();
-                for (let i = 0; i < rows + 1; i++) {
-                    const rowType = (i === 1)
-                        ? RowType.Separator
-                        : RowType.Data;
-
-                    table.addRow(rowType, new Array(cols).fill(''));
-                }
-
-                // TODO: Refactor this!
-                if (configuration.get<string>(configuration.modeKey, configuration.Mode.Markdown) === configuration.Mode.Markdown) {
-                    table.cols.forEach(c => c.width = 3);
-                }
-
-                const currentPosition = editor.selection.start;
-                editor
-                    .edit(b => b.insert(currentPosition, stringifier.stringify(table)))
-                    .then(() => editor.selection = new vscode.Selection(currentPosition, currentPosition));
+                cmd.createTable(rows, cols, editor, configuration, stringifier);
             }
         });
     }));

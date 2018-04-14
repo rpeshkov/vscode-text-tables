@@ -10,6 +10,16 @@ export enum Mode {
     Markdown = 'markdown'
 }
 
-export function get<T>(key: string, defaultValue: T): T {
-    return vscode.workspace.getConfiguration(section).get<T>(key, defaultValue);
+export interface Configuration {
+    mode: Mode;
+    showStatus: boolean;
+}
+
+export function build(overrides?: any): Configuration {
+    const c = vscode.workspace.getConfiguration(section);
+    const cfg: Configuration = {
+        mode: c.get<Mode>(modeKey, Mode.Markdown),
+        showStatus: c.get<boolean>(showStatusKey, true)
+    };
+    return Object.assign(cfg, overrides);
 }
