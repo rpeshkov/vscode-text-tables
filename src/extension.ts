@@ -51,6 +51,36 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
     });
 
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.moveRowDown', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const table = formatAndGetTableUnderCursor(editor);
+            if (table) {
+                const rowNum = editor.selection.end.line - table.startLine;
+                if (rowNum >= table.rows.length - 1) {
+                    vscode.window.showWarningMessage('Cannot move row further');
+                    return;
+                }
+                vscode.commands.executeCommand('editor.action.moveLinesDownAction');
+            }
+        }
+    }));
+
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.moveRowUp', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const table = formatAndGetTableUnderCursor(editor);
+            if (table) {
+                const rowNum = editor.selection.start.line - table.startLine;
+                if (rowNum <= 0) {
+                    vscode.window.showWarningMessage('Cannot move row further');
+                    return;
+                }
+                vscode.commands.executeCommand('editor.action.moveLinesUpAction');
+            }
+        }
+    }));
+
     // Command for manually enabling extension
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.enable', () => {
         vscode.window.showInformationMessage('Text tables enabled!');

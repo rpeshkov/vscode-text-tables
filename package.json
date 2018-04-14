@@ -63,6 +63,16 @@
             {
                 "command": "text-tables.clearCell",
                 "title": "Text Tables: Clear cell"
+            },
+            {
+                "command": "text-tables.moveRowDown",
+                "title": "Move row down",
+                "category": "Text Tables"
+            },
+            {
+                "command": "text-tables.moveRowUp",
+                "title": "Move row up",
+                "category": "Text Tables"
             }
         ],
         "configuration": {
@@ -114,6 +124,16 @@
             {
                 "command": "text-tables.gotoPreviousCell",
                 "key": "shift+tab",
+                "when": "tableMode"
+            },
+            {
+                "command": "text-tables.moveRowUp",
+                "key": "alt+up",
+                "when": "tableMode"
+            },
+            {
+                "command": "text-tables.moveRowDown",
+                "key": "alt+down",
                 "when": "tableMode"
             }
         ]
