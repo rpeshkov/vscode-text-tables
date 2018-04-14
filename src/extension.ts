@@ -250,6 +250,11 @@ export function activate(ctx: vscode.ExtensionContext) {
                     table.addRow(rowType, new Array(cols).fill(''));
                 }
 
+                // TODO: Refactor this!
+                if (configuration.get<string>(configuration.modeKey, configuration.Mode.Markdown) === configuration.Mode.Markdown) {
+                    table.cols.forEach(c => c.width = 3);
+                }
+
                 const currentPosition = editor.selection.start;
                 editor
                     .edit(b => b.insert(currentPosition, stringifier.stringify(table)))
