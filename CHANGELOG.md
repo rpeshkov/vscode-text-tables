@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.8] - 2018-04-14
+
 ### Changed
 
 - Fixed `Create table` command for markdown (#24).
@@ -57,7 +59,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Initial release
 
-[Unreleased]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.7...HEAD
+[Unreleased]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.8...HEAD
+[0.0.8]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.4...v0.0.5
