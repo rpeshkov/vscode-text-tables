@@ -2,7 +2,7 @@
     "name": "vscode-text-tables",
     "displayName": "Text Tables",
     "description": "Work with text tables without pain",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "icon": "icons/icon.png",
     "preview": true,
     "publisher": "RomanPeshkov",
