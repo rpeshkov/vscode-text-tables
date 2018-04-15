@@ -130,9 +130,9 @@ function registerTableCommand(command: string, callback: TableCommandCallback, o
         table.startLine = tableRange.start.line;
 
         if (options && options.format) {
-            cmd.formatUnderCursor(editor, tableRange, table, stringifier);
+            cmd.formatUnderCursor(editor, tableRange, table, stringifier).then(() => callback(editor, tableRange, table));
+        } else {
+            callback(editor, tableRange, table);
         }
-
-        callback(editor, tableRange, table);
     });
 }

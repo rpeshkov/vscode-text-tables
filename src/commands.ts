@@ -60,12 +60,17 @@ export function gotoPreviousCell(editor: vscode.TextEditor, _range: vscode.Range
     }
 }
 
-export function formatUnderCursor(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
+export function formatUnderCursor(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier): Promise<void> {
     const newText = stringifier.stringify(table);
     const prevSel = editor.selection.start;
-    editor
+    return new Promise<void>(resolve => {
+        editor
         .edit(b => b.replace(range, newText))
-        .then(() => editor.selection = new vscode.Selection(prevSel, prevSel));
+        .then(() => {
+            editor.selection = new vscode.Selection(prevSel, prevSel);
+            resolve();
+        });
+    });
 }
 
 export function moveColRight(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
