@@ -15,11 +15,20 @@ export interface Configuration {
     showStatus: boolean;
 }
 
-export function build(overrides?: any): Configuration {
+export function build(): Configuration {
     const c = vscode.workspace.getConfiguration(section);
-    const cfg: Configuration = {
+
+    return {
         mode: c.get<Mode>(modeKey, Mode.Markdown),
         showStatus: c.get<boolean>(showStatusKey, true)
     };
-    return Object.assign(cfg, overrides);
+
+    // Object.assign(cfg, overrides);
+}
+
+export async function override(overrides: any) {
+    const c = vscode.workspace.getConfiguration(section);
+    for (const k of Object.keys(overrides)) {
+        await c.update(k, overrides[k], false);
+    }
 }

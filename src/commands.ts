@@ -26,7 +26,7 @@ export function createTable(rowsCount: number, colsCount: number, editor: vscode
     });
 }
 
-export function moveRowDown(editor: vscode.TextEditor, _range: vscode.Range, table: Table) {
+export function moveRowDown(editor: vscode.TextEditor, e: vscode.TextEditorEdit, _range: vscode.Range, table: Table) {
     const rowNum = editor.selection.end.line - table.startLine;
     if (rowNum >= table.rows.length - 1) {
         vscode.window.showWarningMessage('Cannot move row further');
@@ -35,7 +35,7 @@ export function moveRowDown(editor: vscode.TextEditor, _range: vscode.Range, tab
     vscode.commands.executeCommand('editor.action.moveLinesDownAction');
 }
 
-export function moveRowUp(editor: vscode.TextEditor, _range: vscode.Range, table: Table) {
+export function moveRowUp(editor: vscode.TextEditor, e: vscode.TextEditorEdit, _range: vscode.Range, table: Table) {
     const rowNum = editor.selection.start.line - table.startLine;
     if (rowNum <= 0) {
         vscode.window.showWarningMessage('Cannot move row further');
@@ -44,7 +44,7 @@ export function moveRowUp(editor: vscode.TextEditor, _range: vscode.Range, table
     vscode.commands.executeCommand('editor.action.moveLinesUpAction');
 }
 
-export function gotoNextCell(editor: vscode.TextEditor, _range: vscode.Range, table: Table) {
+export function gotoNextCell(editor: vscode.TextEditor, e: vscode.TextEditorEdit, _range: vscode.Range, table: Table) {
     const nav = new TableNavigator(table);
     const newPos = nav.nextCell(editor.selection.start);
     if (newPos) {
@@ -52,7 +52,7 @@ export function gotoNextCell(editor: vscode.TextEditor, _range: vscode.Range, ta
     }
 }
 
-export function gotoPreviousCell(editor: vscode.TextEditor, _range: vscode.Range, table: Table) {
+export function gotoPreviousCell(editor: vscode.TextEditor, e: vscode.TextEditorEdit, _range: vscode.Range, table: Table) {
     const nav = new TableNavigator(table);
     const newPos = nav.previousCell(editor.selection.start);
     if (newPos) {
@@ -60,20 +60,15 @@ export function gotoPreviousCell(editor: vscode.TextEditor, _range: vscode.Range
     }
 }
 
-export function formatUnderCursor(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier): Promise<void> {
+export async function formatUnderCursor(editor: vscode.TextEditor, e: vscode.TextEditorEdit, range: vscode.Range, table: Table, stringifier: Stringifier) {
     const newText = stringifier.stringify(table);
     const prevSel = editor.selection.start;
-    return new Promise<void>(resolve => {
-        editor
-        .edit(b => b.replace(range, newText))
-        .then(() => {
-            editor.selection = new vscode.Selection(prevSel, prevSel);
-            resolve();
-        });
-    });
+
+    e.replace(range, newText);
+    editor.selection = new vscode.Selection(prevSel, prevSel);
 }
 
-export function moveColRight(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
+export async function moveColRight(editor: vscode.TextEditor, e: vscode.TextEditorEdit, range: vscode.Range, table: Table, stringifier: Stringifier) {
     const rowCol = rowColFromPosition(table, editor.selection.start);
     if (rowCol.col < 0) {
         vscode.window.showWarningMessage('Not in table data field');
@@ -95,12 +90,11 @@ export function moveColRight(editor: vscode.TextEditor, range: vscode.Range, tab
     });
 
     const newText = stringifier.stringify(table);
-    editor
-        .edit(b => b.replace(range, newText))
-        .then(() => vscode.commands.executeCommand('text-tables.gotoNextCell'));
+    e.replace(range, newText);
+    await gotoNextCell(editor, e, range, table);
 }
 
-export function moveColLeft(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
+export async function moveColLeft(editor: vscode.TextEditor, e: vscode.TextEditorEdit, range: vscode.Range, table: Table, stringifier: Stringifier) {
     const rowCol = rowColFromPosition(table, editor.selection.start);
     if (rowCol.col < 0) {
         vscode.window.showWarningMessage('Not in table data field');
@@ -122,12 +116,11 @@ export function moveColLeft(editor: vscode.TextEditor, range: vscode.Range, tabl
     });
 
     const newText = stringifier.stringify(table);
-    editor
-        .edit(b => b.replace(range, newText))
-        .then(() => vscode.commands.executeCommand('text-tables.gotoPreviousCell'));
+    e.replace(range, newText);
+    await gotoPreviousCell(editor, e, range, table);
 }
 
-export function clearCell(editor: vscode.TextEditor, parser: Parser) {
+export function clearCell(editor: vscode.TextEditor, edit: vscode.TextEditorEdit, parser: Parser) {
     const document = editor.document;
     const currentLineNumber = editor.selection.start.line;
     const currentLine = document.lineAt(currentLineNumber);
@@ -148,10 +141,8 @@ export function clearCell(editor: vscode.TextEditor, parser: Parser) {
         return;
     }
 
-    editor.edit(e => {
-        const r = new vscode.Range(currentLineNumber, leftSepPosition + 1, currentLineNumber, rightSepPosition);
-        e.replace(r, ' '.repeat(rightSepPosition - leftSepPosition - 1));
-    });
+    const r = new vscode.Range(currentLineNumber, leftSepPosition + 1, currentLineNumber, rightSepPosition);
+    edit.replace(r, ' '.repeat(rightSepPosition - leftSepPosition - 1));
     const newPos = new vscode.Position(currentLineNumber, leftSepPosition + 2);
     editor.selection = new vscode.Selection(newPos, newPos);
 }
