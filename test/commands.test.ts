@@ -106,7 +106,6 @@ suite.only('Commands', () => {
         });
     });
 
-
     test('Test "Move row down"', async () => {
         const input = `| 1 | 2 |
 |---+---|
@@ -188,7 +187,6 @@ suite.only('Commands', () => {
             move(editor, 0, 2);
             for (const expected of steps) {
                 await vscode.commands.executeCommand('text-tables.moveColRight');
-                // console.log(document.getText());
                 assert.equal(document.getText(), expected);
             }
         });
