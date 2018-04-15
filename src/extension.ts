@@ -79,8 +79,8 @@ export function activate(ctx: vscode.ExtensionContext) {
     ctx.subscriptions.push(registerTableCommand('text-tables.gotoPreviousCell', cmd.gotoPreviousCell, {format: true}));
 
     // Format table under cursor
-    // ctx.subscriptions.push(registerTableCommand('text-tables.formatUnderCursor',
-    //     (editor, range, table) => cmd.formatUnderCursor(editor, range, table, stringifier)));
+    ctx.subscriptions.push(registerTableCommand('text-tables.formatUnderCursor',
+        (editor, e, range, table) => cmd.formatUnderCursor(editor, e, range, table, stringifier)));
 
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.createTable', editor => {
         const opts: vscode.InputBoxOptions = {

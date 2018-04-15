@@ -50,11 +50,21 @@ suite.only('Commands', () => {
     });
 
     test('Test "Clear cell"', async () => {
-        const testCase = `| Hello | World |`;
-        const expectedResult = `|       | World |`;
+        const testCase =
+`| Hello | World | Some other text
+| ----- | ----- |`;
+        const expectedResult =
+`|       | World |                \n` +
+`| ----- | ----- |`;
 
         await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
+            await cfg.override({mode: 'markdown'});
+            await vscode.commands.executeCommand('text-tables.clearCell');
             move(editor, 0, 2);
+            await vscode.commands.executeCommand('text-tables.clearCell');
+            move(editor, 0, 17);
+            await vscode.commands.executeCommand('text-tables.clearCell');
+            move(editor, 1, 2);
             await vscode.commands.executeCommand('text-tables.clearCell');
             assert.equal(document.getText(), expectedResult);
         });
@@ -189,6 +199,49 @@ suite.only('Commands', () => {
                 await vscode.commands.executeCommand('text-tables.moveColRight');
                 assert.equal(document.getText(), expected);
             }
+        });
+    });
+
+    test('Test "Move col left"', async () => {
+        const input =
+`| 1 | 2 | 3 |
+| 4 | 5 | 6 |`;
+
+        const steps = [
+`| 1 | 3 | 2 |
+| 4 | 6 | 5 |`
+,
+`| 3 | 1 | 2 |
+| 6 | 4 | 5 |`
+,
+`| 3 | 1 | 2 |
+| 6 | 4 | 5 |`
+        ];
+
+        await inTextEditor({language: 'org', content: input}, async (editor, document) => {
+            await cfg.override({mode: 'org'});
+            move(editor, 0, 10);
+            for (const expected of steps) {
+                await vscode.commands.executeCommand('text-tables.moveColLeft');
+                assert.equal(document.getText(), expected);
+            }
+        });
+    });
+
+    test('Test "Format under cursor"', async () => {
+        const input =
+`| 1   |   2     |        3     |
+| 4    | 5       |        6 |`;
+
+        const expected =
+`| 1 | 2 | 3 |
+| 4 | 5 | 6 |`;
+
+        await inTextEditor({language: 'org', content: input}, async (_, document) => {
+            await cfg.override({mode: 'org'});
+
+            await vscode.commands.executeCommand('text-tables.formatUnderCursor');
+            assert.equal(document.getText(), expected);
         });
     });
 });
