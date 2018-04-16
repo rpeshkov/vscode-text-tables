@@ -244,4 +244,33 @@ suite('Commands', () => {
             assert.equal(document.getText(), expected);
         });
     });
+
+    test('Test "Next Row"', async () => {
+        const input =
+`| Row  |
+| Row2 |`;
+
+        const steps = [
+`| Row  |
+| Row2 |`
+,
+`| Row  |
+| Row2 |
+|      |`
+,
+`| Row  |
+| Row2 |
+|      |
+|      |`
+        ]
+
+        await inTextEditor({language: 'org', content: input}, async (editor, document) => {
+            await cfg.override({mode: 'org'});
+            move(editor, 0, 2);
+            for (const expected of steps) {
+                await vscode.commands.executeCommand('text-tables.nextRow');
+                assert.equal(document.getText(), expected);
+            }
+        });
+    });
 });

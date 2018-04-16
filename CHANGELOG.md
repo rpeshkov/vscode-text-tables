@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Command `text-tables.nextRow` (`Text Tables: Next row` in command pallete) for jumping on next row and creating new rows if needed.
+
 ## [0.1.0] - 2018-04-16
 
 ### Changed

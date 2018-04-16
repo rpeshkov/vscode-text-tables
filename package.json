@@ -160,6 +160,11 @@
                 "command": "text-tables.moveColLeft",
                 "key": "alt+left",
                 "when": "tableMode"
+            },
+            {
+                "command": "text-tables.nextRow",
+                "key": "enter",
+                "when": "tableMode"
             }
         ]
     },

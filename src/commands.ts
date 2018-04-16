@@ -187,12 +187,16 @@ export function nextRow(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, ra
         table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
     }
 
-    const lines = stringifier.stringify(table).split('\n');
-
-    editor.edit(b => b.insert(range.end, '\n' + lines.pop()!));
-
-    const newPos = editor.selection.start.translate(1).with(undefined, 2);
-    editor.selection = new vscode.Selection(newPos, newPos);
+    // Editing by "_e" messes cursor position. Looks like edits are applied once the command is finished,
+    // but it's too late
+    editor.edit(b => b.replace(range, stringifier.stringify(table)))
+        .then(() => {
+            const nav = new TableNavigator(table);
+            const nextRowPos = nav.nextRow(editor.selection.start);
+            if (nextRowPos) {
+                editor.selection = new vscode.Selection(nextRowPos, nextRowPos);
+            }
+        });
 }
 
 function rowColFromPosition(table: Table, position: vscode.Position): { row: number, col: number } {
