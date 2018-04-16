@@ -18,7 +18,7 @@ function move(editor: vscode.TextEditor, line: number, col: number) {
     editor.selection = new vscode.Selection(pos, pos);
 }
 
-suite.only('Commands', () => {
+suite('Commands', () => {
     setup(async () => {
         await vscode.workspace.updateWorkspaceFolders(0, null, {uri: vscode.Uri.parse('.')});
     });
