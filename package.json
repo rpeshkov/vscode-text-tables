@@ -83,6 +83,11 @@
                 "command": "text-tables.moveColLeft",
                 "title": "Move column left",
                 "category": "Text Tables"
+            },
+            {
+                "command": "text-tables.nextRow",
+                "title": "Next row",
+                "category": "Text Tables"
             }
         ],
         "configuration": {

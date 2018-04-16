@@ -177,6 +177,24 @@ export function clearCell(editor: vscode.TextEditor, edit: vscode.TextEditorEdit
     editor.selection = new vscode.Selection(newPos, newPos);
 }
 
+/**
+ * Moves cursor to the next row. If cursor is in the last row of table, create new row
+ */
+export function nextRow(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, range: vscode.Range, table: Table, stringifier: Stringifier) {
+    const inLastRow = range.end.line === editor.selection.start.line;
+
+    if (inLastRow) {
+        table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
+    }
+
+    const lines = stringifier.stringify(table).split('\n');
+
+    editor.edit(b => b.insert(range.end, '\n' + lines.pop()!));
+
+    const newPos = editor.selection.start.translate(1).with(undefined, 2);
+    editor.selection = new vscode.Selection(newPos, newPos);
+}
+
 function rowColFromPosition(table: Table, position: vscode.Position): { row: number, col: number } {
     const result = { row: -1, col: -1 };
 
