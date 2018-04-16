@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import * as cfg from './configuration';
 import { Table, RowType, Stringifier, TableNavigator, Parser } from './ttTable';
 
+/**
+ * Create new table with specified rows and columns count in position of cursor
+ */
 export function createTable(rowsCount: number, colsCount: number, editor: vscode.TextEditor,
     configuration: cfg.Configuration, stringifier: Stringifier): Promise<void> {
     const table = new Table();
@@ -26,6 +29,9 @@ export function createTable(rowsCount: number, colsCount: number, editor: vscode
     });
 }
 
+/**
+ * Swap row under cursor with row below
+ */
 export function moveRowDown(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, _range: vscode.Range, table: Table) {
     const rowNum = editor.selection.end.line - table.startLine;
     if (rowNum >= table.rows.length - 1) {
@@ -35,6 +41,9 @@ export function moveRowDown(editor: vscode.TextEditor, _e: vscode.TextEditorEdit
     vscode.commands.executeCommand('editor.action.moveLinesDownAction');
 }
 
+/**
+ * Swap row under cursor with row above
+ */
 export function moveRowUp(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, _range: vscode.Range, table: Table) {
     const rowNum = editor.selection.start.line - table.startLine;
     if (rowNum <= 0) {
@@ -44,6 +53,9 @@ export function moveRowUp(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, 
     vscode.commands.executeCommand('editor.action.moveLinesUpAction');
 }
 
+/**
+ * Move cursor to the next cell of table
+ */
 export function gotoNextCell(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, _range: vscode.Range, table: Table) {
     const nav = new TableNavigator(table);
     const newPos = nav.nextCell(editor.selection.start);
@@ -52,6 +64,9 @@ export function gotoNextCell(editor: vscode.TextEditor, _e: vscode.TextEditorEdi
     }
 }
 
+/**
+ * Move cursor to the previous cell of table
+ */
 export function gotoPreviousCell(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, _range: vscode.Range, table: Table) {
     const nav = new TableNavigator(table);
     const newPos = nav.previousCell(editor.selection.start);
@@ -60,6 +75,9 @@ export function gotoPreviousCell(editor: vscode.TextEditor, _e: vscode.TextEdito
     }
 }
 
+/**
+ * Format table under cursor
+ */
 export async function formatUnderCursor(editor: vscode.TextEditor, e: vscode.TextEditorEdit,
     range: vscode.Range, table: Table, stringifier: Stringifier) {
     const newText = stringifier.stringify(table);
@@ -69,6 +87,9 @@ export async function formatUnderCursor(editor: vscode.TextEditor, e: vscode.Tex
     editor.selection = new vscode.Selection(prevSel, prevSel);
 }
 
+/**
+ * Swap column under cursor with column on the right
+ */
 export async function moveColRight(editor: vscode.TextEditor, e: vscode.TextEditorEdit,
     range: vscode.Range, table: Table, stringifier: Stringifier) {
     const rowCol = rowColFromPosition(table, editor.selection.start);
@@ -96,6 +117,9 @@ export async function moveColRight(editor: vscode.TextEditor, e: vscode.TextEdit
     await gotoNextCell(editor, e, range, table);
 }
 
+/**
+ * Swap column under cursor with column on the left
+ */
 export async function moveColLeft(editor: vscode.TextEditor, e: vscode.TextEditorEdit,
     range: vscode.Range, table: Table, stringifier: Stringifier) {
     const rowCol = rowColFromPosition(table, editor.selection.start);
@@ -123,6 +147,9 @@ export async function moveColLeft(editor: vscode.TextEditor, e: vscode.TextEdito
     await gotoPreviousCell(editor, e, range, table);
 }
 
+/**
+ * Clear cell under cursor
+ */
 export function clearCell(editor: vscode.TextEditor, edit: vscode.TextEditorEdit, parser: Parser) {
     const document = editor.document;
     const currentLineNumber = editor.selection.start.line;
