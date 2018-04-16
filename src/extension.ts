@@ -77,6 +77,9 @@ export function activate(ctx: vscode.ExtensionContext) {
         (e, ed) => cmd.clearCell(e, ed, parser)));
     ctx.subscriptions.push(registerTableCommand('text-tables.gotoNextCell', cmd.gotoNextCell, {format: true}));
     ctx.subscriptions.push(registerTableCommand('text-tables.gotoPreviousCell', cmd.gotoPreviousCell, {format: true}));
+    ctx.subscriptions.push(registerTableCommand('text-tables.nextRow', (editor, e, range, table) => {
+        cmd.nextRow(editor, e, range, table, stringifier);
+    }));
 
     // Format table under cursor
     ctx.subscriptions.push(registerTableCommand('text-tables.formatUnderCursor',

@@ -118,6 +118,15 @@ export class TableNavigator {
         return this.jump(cursorPosition, x => x.prev!);
     }
 
+    nextRow(cursorPosition: vscode.Position): vscode.Position | undefined {
+        const nextRowJump = this.jumpPositions.find(x => x.range.contains(cursorPosition.translate(1)));
+        if (!nextRowJump) {
+            return undefined;
+        }
+
+        return nextRowJump.range.start.translate(0, 1);
+    }
+
     private jump(currentPosition: vscode.Position, accessor: (x: JumpPosition) => JumpPosition): vscode.Position | undefined {
         let jmp = this.jumpPositions.find(x => x.range.contains(currentPosition));
         if (jmp) {

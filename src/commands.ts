@@ -177,6 +177,28 @@ export function clearCell(editor: vscode.TextEditor, edit: vscode.TextEditorEdit
     editor.selection = new vscode.Selection(newPos, newPos);
 }
 
+/**
+ * Moves cursor to the next row. If cursor is in the last row of table, create new row
+ */
+export function nextRow(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, range: vscode.Range, table: Table, stringifier: Stringifier) {
+    const inLastRow = range.end.line === editor.selection.start.line;
+
+    if (inLastRow) {
+        table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
+    }
+
+    // Editing by "_e" messes cursor position. Looks like edits are applied once the command is finished,
+    // but it's too late
+    editor.edit(b => b.replace(range, stringifier.stringify(table)))
+        .then(() => {
+            const nav = new TableNavigator(table);
+            const nextRowPos = nav.nextRow(editor.selection.start);
+            if (nextRowPos) {
+                editor.selection = new vscode.Selection(nextRowPos, nextRowPos);
+            }
+        });
+}
+
 function rowColFromPosition(table: Table, position: vscode.Position): { row: number, col: number } {
     const result = { row: -1, col: -1 };
 
