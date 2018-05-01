@@ -59,11 +59,10 @@ export function moveRowUp(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, 
 export async function gotoNextCell(editor: vscode.TextEditor, _range: vscode.Range, table: Table,
     stringifier: Stringifier) {
 
-    await editor.edit(e => formatUnderCursor(editor, e, _range, table, stringifier));
-
     const nav = new TableNavigator(table);
     const newPos = nav.nextCell(editor.selection.start);
     if (newPos) {
+        await editor.edit(e => formatUnderCursor(editor, e, _range, table, stringifier));
         editor.selection = new vscode.Selection(newPos, newPos);
     } else {
         table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
