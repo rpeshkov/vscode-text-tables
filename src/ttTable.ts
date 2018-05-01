@@ -160,6 +160,8 @@ export class TableNavigator {
             accum.push(lastAnchor);
             return accum;
         }, [lastAnchor]);
+        // extend last point to "infinity"
+        anchors[anchors.length - 1] = 999;
 
         for (let i = 0; i < this.table.rows.length; ++i) {
             const row = this.table.rows[i];
