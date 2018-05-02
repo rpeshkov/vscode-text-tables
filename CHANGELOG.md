@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Command `text-tables.nextRow` (`Text Tables: Next row` in command pallete) for jumping on next row and creating new rows if needed.
 
+### Changed
+
+- Command `text-tables.gotoNextCell` (`Text Tables: Go to next cell` in command pallete) inserts new row when applied in last data cell of table.
+
 ## [0.1.0] - 2018-04-16
 
 ### Changed

@@ -77,6 +77,9 @@ export function activate(ctx: vscode.ExtensionContext) {
         (e, ed) => cmd.clearCell(e, ed, parser)));
 
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.gotoNextCell', async () => {
+        // TODO: Refactor this by reimplementing registerTableCommand function
+        // Internally registerTableCommand uses registerTextEditorCommand which doesn't allow to apply multiple edits
+        // from different places.
         const editor = vscode.window.activeTextEditor;
         if (isUndefined(editor)) {
             return;
