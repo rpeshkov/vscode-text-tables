@@ -75,7 +75,34 @@ export function activate(ctx: vscode.ExtensionContext) {
 
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.clearCell',
         (e, ed) => cmd.clearCell(e, ed, parser)));
-    ctx.subscriptions.push(registerTableCommand('text-tables.gotoNextCell', cmd.gotoNextCell, {format: true}));
+
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.gotoNextCell', async () => {
+        // TODO: Refactor this by reimplementing registerTableCommand function
+        // Internally registerTableCommand uses registerTextEditorCommand which doesn't allow to apply multiple edits
+        // from different places.
+        const editor = vscode.window.activeTextEditor;
+        if (isUndefined(editor)) {
+            return;
+        }
+
+        const tableRange = locator.locate(editor.document, editor.selection.start.line);
+        if (isUndefined(tableRange)) {
+            return;
+        }
+        const selectedText = editor.document.getText(tableRange);
+        const table = parser.parse(selectedText);
+
+        if (isUndefined(table)) {
+            return;
+        }
+
+        table.startLine = tableRange.start.line;
+
+        await cmd.gotoNextCell(editor, tableRange, table, stringifier);
+    }));
+    // ctx.subscriptions.push(registerTableCommand('text-tables.gotoNextCell', (editor, e, range, table) => {
+    //     cmd.gotoNextCell(editor, e, range, table, stringifier);
+    // }));
     ctx.subscriptions.push(registerTableCommand('text-tables.gotoPreviousCell', cmd.gotoPreviousCell, {format: true}));
     ctx.subscriptions.push(registerTableCommand('text-tables.nextRow', (editor, e, range, table) => {
         cmd.nextRow(editor, e, range, table, stringifier);

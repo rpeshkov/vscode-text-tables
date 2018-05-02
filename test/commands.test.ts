@@ -74,22 +74,28 @@ suite('Commands', () => {
         const input = `|        |            |
 |--+--|
 |  |  |`;
+        const expected = `|  |  |
+|--+--|
+|  |  |
+|  |  |`;
 
         const testCases = [
             new vscode.Position(0, 2),
             new vscode.Position(0, 5),
             new vscode.Position(2, 2),
             new vscode.Position(2, 5),
-            // Repeated intentionally to check that it won't jump outside
-            new vscode.Position(2, 5),
+            new vscode.Position(3, 2),
+            new vscode.Position(3, 5),
         ];
 
-        await inTextEditor({language: 'markdown', content: input}, async (editor, _) => {
+        await inTextEditor({language: 'markdown', content: input}, async (editor, document) => {
             await cfg.override({mode: 'org'});
             for (const t of testCases) {
                 await vscode.commands.executeCommand('text-tables.gotoNextCell');
                 assert.deepEqual(editor.selection.start, t);
             }
+
+            assert.equal(document.getText(), expected);
         });
     });
 

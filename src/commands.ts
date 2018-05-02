@@ -56,11 +56,17 @@ export function moveRowUp(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, 
 /**
  * Move cursor to the next cell of table
  */
-export function gotoNextCell(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, _range: vscode.Range, table: Table) {
+export async function gotoNextCell(editor: vscode.TextEditor, _range: vscode.Range, table: Table,
+    stringifier: Stringifier) {
+
     const nav = new TableNavigator(table);
     const newPos = nav.nextCell(editor.selection.start);
     if (newPos) {
+        await editor.edit(e => formatUnderCursor(editor, e, _range, table, stringifier));
         editor.selection = new vscode.Selection(newPos, newPos);
+    } else {
+        table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
+        await gotoNextCell(editor, _range, table, stringifier);
     }
 }
 
@@ -114,7 +120,7 @@ export async function moveColRight(editor: vscode.TextEditor, e: vscode.TextEdit
 
     const newText = stringifier.stringify(table);
     e.replace(range, newText);
-    await gotoNextCell(editor, e, range, table);
+    await gotoNextCell(editor, range, table, stringifier);
 }
 
 /**
@@ -180,7 +186,8 @@ export function clearCell(editor: vscode.TextEditor, edit: vscode.TextEditorEdit
 /**
  * Moves cursor to the next row. If cursor is in the last row of table, create new row
  */
-export function nextRow(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, range: vscode.Range, table: Table, stringifier: Stringifier) {
+export function nextRow(editor: vscode.TextEditor, _e: vscode.TextEditorEdit, range: vscode.Range, table: Table,
+    stringifier: Stringifier) {
     const inLastRow = range.end.line === editor.selection.start.line;
 
     if (inLastRow) {
