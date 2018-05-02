@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Command `text-tables.gotoNextCell` (`Text Tables: Go to next cell` in command pallete) inserts new row when applied in last data cell of table.
+- Fixed markdown parser for tables with separator row where separator row has less columns than other row (#33).
 
 ## [0.1.0] - 2018-04-16
 
