@@ -1,5 +1,6 @@
 import * as tt from './ttTable';
 import * as vscode from 'vscode';
+import { RowType } from './ttTable';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
@@ -20,7 +21,6 @@ export class MarkdownParser implements tt.Parser {
 
             if (this.isSeparatorRow(cleanedString)) {
                 result.addRow(tt.RowType.Separator, []);
-                result.cols.forEach(x => x.width = Math.max(x.width, 3));
                 const startIndex = cleanedString.startsWith(verticalSeparator) ? 1 : 0;
                 const endIndex = cleanedString.length - (cleanedString.endsWith(verticalSeparator) ? 1 : 0);
                 const rowParts = cleanedString.slice(startIndex, endIndex).split('|');
@@ -57,6 +57,10 @@ export class MarkdownParser implements tt.Parser {
                 .map(x => x.trim());
 
             result.addRow(tt.RowType.Data, values);
+        }
+
+        if (result.rows.some(x => x.type === RowType.Separator)) {
+            result.cols.forEach(x => x.width = Math.max(x.width, 3));
         }
 
         return result;
