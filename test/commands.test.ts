@@ -251,6 +251,25 @@ suite('Commands', () => {
         });
     });
 
+    test('Test "Format under cursor" for markdown', async () => {
+        const input =
+`| 1   |   2     |
+| --- |
+| 4    | 5       |        6 |`;
+
+        const expected =
+`| 1   | 2   |     |
+| --- | --- | --- |
+| 4   | 5   | 6   |`;
+
+        await inTextEditor({language: 'markdown', content: input}, async (_, document) => {
+            await cfg.override({mode: 'markdown'});
+
+            await vscode.commands.executeCommand('text-tables.formatUnderCursor');
+            assert.equal(document.getText(), expected);
+        });
+    });
+
     test('Test "Next Row"', async () => {
         const input =
 `| Row  |
