@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.5] - 2018-05-03
+
 ### Added
 
 - Command `text-tables.nextRow` (`Text Tables: Next row` in command pallete) for jumping on next row and creating new rows if needed.
@@ -84,7 +86,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Initial release
 
-[Unreleased]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.1.0...v0.1.5
 [0.1.0]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.9...v0.1.0
 [0.0.9]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.7...v0.0.8
