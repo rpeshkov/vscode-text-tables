@@ -107,7 +107,7 @@ export function activate(ctx: vscode.ExtensionContext) {
             if (match) {
                 const cols = +match[1] || 1;
                 const rows = +match[2] || 2;
-                cmd.createTable(rows, cols, editor, configuration, stringifier);
+                cmd.createTable(rows, cols, editor, stringifier);
             }
         }
     }));

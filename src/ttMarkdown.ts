@@ -81,6 +81,10 @@ export class MarkdownStringifier implements tt.Stringifier {
     stringify(table: tt.Table): string {
         const result = [];
 
+        if (table.rows.some(x => x.type === RowType.Separator)) {
+            table.cols.forEach(x => x.width = Math.max(x.width, 3));
+        }
+
         for (let i = 0; i < table.rows.length; ++i) {
             let rowString = '';
             const rowData = table.getRow(i);

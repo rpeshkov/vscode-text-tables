@@ -30,8 +30,7 @@ suite('Commands', () => {
 
         await inTextEditor({language: 'markdown'}, async (editor, document) => {
             await cfg.override({'mode': cfg.Mode.Markdown});
-            const config = cfg.build();
-            await cmd.createTable(2, 2, editor, config, new MarkdownStringifier());
+            await cmd.createTable(2, 2, editor, new MarkdownStringifier());
             assert.equal(document.getText(), expectedResult);
         });
     });
@@ -43,8 +42,7 @@ suite('Commands', () => {
 
         await inTextEditor({language: 'org'}, async (editor, document) => {
             await cfg.override({'mode': cfg.Mode.Org});
-            const config = cfg.build();
-            await cmd.createTable(2, 2, editor, config, new OrgStringifier());
+            await cmd.createTable(2, 2, editor, new OrgStringifier());
             assert.equal(document.getText(), expectedResult);
         });
     });

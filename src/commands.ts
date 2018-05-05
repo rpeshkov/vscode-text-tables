@@ -1,22 +1,15 @@
 import * as vscode from 'vscode';
-import * as cfg from './configuration';
 import { Table, RowType, Stringifier, TableNavigator, Parser } from './ttTable';
 
 /**
  * Create new table with specified rows and columns count in position of cursor
  */
-export async function createTable(rowsCount: number, colsCount: number, editor: vscode.TextEditor,
-    configuration: cfg.Configuration, stringifier: Stringifier): Promise<void> {
+export async function createTable(rowsCount: number, colsCount: number, editor: vscode.TextEditor, stringifier: Stringifier) {
     const table = new Table();
     for (let i = 0; i < rowsCount + 1; i++) {
         table.addRow(RowType.Data, new Array(colsCount).fill(''));
     }
     table.rows[1].type = RowType.Separator;
-
-    // TODO: Refactor this!
-    if (configuration.mode === cfg.Mode.Markdown) {
-        table.cols.forEach(c => c.width = 3);
-    }
 
     const currentPosition = editor.selection.start;
     await editor.edit(b => b.insert(currentPosition, stringifier.stringify(table)));
