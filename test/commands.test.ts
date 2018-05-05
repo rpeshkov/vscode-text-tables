@@ -287,7 +287,7 @@ suite('Commands', () => {
 | Row2 |
 |      |
 |      |`
-        ]
+        ];
 
         await inTextEditor({language: 'org', content: input}, async (editor, document) => {
             await cfg.override({mode: 'org'});

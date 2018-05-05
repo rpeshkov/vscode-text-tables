@@ -100,9 +100,7 @@ export function activate(ctx: vscode.ExtensionContext) {
 
         await cmd.gotoNextCell(editor, tableRange, table, stringifier);
     }));
-    // ctx.subscriptions.push(registerTableCommand('text-tables.gotoNextCell', (editor, e, range, table) => {
-    //     cmd.gotoNextCell(editor, e, range, table, stringifier);
-    // }));
+
     ctx.subscriptions.push(registerTableCommand('text-tables.gotoPreviousCell', cmd.gotoPreviousCell, {format: true}));
     ctx.subscriptions.push(registerTableCommand('text-tables.nextRow', (editor, e, range, table) => {
         cmd.nextRow(editor, e, range, table, stringifier);

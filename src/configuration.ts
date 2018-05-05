@@ -22,8 +22,6 @@ export function build(): Configuration {
         mode: c.get<Mode>(modeKey, Mode.Markdown),
         showStatus: c.get<boolean>(showStatusKey, true)
     };
-
-    // Object.assign(cfg, overrides);
 }
 
 export async function override(overrides: any) {
