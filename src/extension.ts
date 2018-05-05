@@ -76,29 +76,8 @@ export function activate(ctx: vscode.ExtensionContext) {
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.clearCell',
         (e, ed) => cmd.clearCell(e, ed, parser)));
 
-    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.gotoNextCell', async () => {
-        // TODO: Refactor this by reimplementing registerTableCommand function
-        // Internally registerTableCommand uses registerTextEditorCommand which doesn't allow to apply multiple edits
-        // from different places.
-        const editor = vscode.window.activeTextEditor;
-        if (isUndefined(editor)) {
-            return;
-        }
-
-        const tableRange = locator.locate(editor.document, editor.selection.start.line);
-        if (isUndefined(tableRange)) {
-            return;
-        }
-        const selectedText = editor.document.getText(tableRange);
-        const table = parser.parse(selectedText);
-
-        if (isUndefined(table)) {
-            return;
-        }
-
-        table.startLine = tableRange.start.line;
-
-        await cmd.gotoNextCell(editor, tableRange, table, stringifier);
+    ctx.subscriptions.push(registerTableCommand('text-tables.gotoNextCell', async (editor, range, table) => {
+        await cmd.gotoNextCell(editor, range, table, stringifier);
     }));
 
     ctx.subscriptions.push(registerTableCommand('text-tables.gotoPreviousCell', cmd.gotoPreviousCell, {format: true}));
@@ -110,7 +89,7 @@ export function activate(ctx: vscode.ExtensionContext) {
     ctx.subscriptions.push(registerTableCommand('text-tables.formatUnderCursor',
         (editor, range, table) => cmd.formatUnderCursor(editor, range, table, stringifier)));
 
-    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.createTable', editor => {
+    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.createTable', async editor => {
         const opts: vscode.InputBoxOptions = {
             value: '5x2',
             prompt: 'Table size Columns x Rows (e.g. 5x2)',
@@ -122,18 +101,15 @@ export function activate(ctx: vscode.ExtensionContext) {
             }
         };
 
-        vscode.window.showInputBox(opts).then(x => {
-            if (!x) {
-                return;
-            }
-
-            const match = x.match(utils.tableSizeRe);
+        const size = await vscode.window.showInputBox(opts);
+        if (size) {
+            const match = size.match(utils.tableSizeRe);
             if (match) {
                 const cols = +match[1] || 1;
                 const rows = +match[2] || 2;
                 cmd.createTable(rows, cols, editor, configuration, stringifier);
             }
-        });
+        }
     }));
 }
 

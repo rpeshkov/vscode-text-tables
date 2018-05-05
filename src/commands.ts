@@ -5,7 +5,7 @@ import { Table, RowType, Stringifier, TableNavigator, Parser } from './ttTable';
 /**
  * Create new table with specified rows and columns count in position of cursor
  */
-export function createTable(rowsCount: number, colsCount: number, editor: vscode.TextEditor,
+export async function createTable(rowsCount: number, colsCount: number, editor: vscode.TextEditor,
     configuration: cfg.Configuration, stringifier: Stringifier): Promise<void> {
     const table = new Table();
     for (let i = 0; i < rowsCount + 1; i++) {
@@ -18,15 +18,9 @@ export function createTable(rowsCount: number, colsCount: number, editor: vscode
         table.cols.forEach(c => c.width = 3);
     }
 
-    return new Promise<void>(resolve => {
-        const currentPosition = editor.selection.start;
-        editor
-            .edit(b => b.insert(currentPosition, stringifier.stringify(table)))
-            .then(() => {
-                editor.selection = new vscode.Selection(currentPosition, currentPosition);
-                resolve();
-            });
-    });
+    const currentPosition = editor.selection.start;
+    await editor.edit(b => b.insert(currentPosition, stringifier.stringify(table)));
+    editor.selection = new vscode.Selection(currentPosition, currentPosition);
 }
 
 /**
