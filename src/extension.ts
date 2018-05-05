@@ -66,11 +66,11 @@ export function activate(ctx: vscode.ExtensionContext) {
 
     ctx.subscriptions.push(registerTableCommand('text-tables.moveRowDown', cmd.moveRowDown, {format: true}));
     ctx.subscriptions.push(registerTableCommand('text-tables.moveRowUp', cmd.moveRowUp, {format: true}));
-    ctx.subscriptions.push(registerTableCommand('text-tables.moveColRight', (editor, e, range, table) => {
-        cmd.moveColRight(editor, e, range, table, stringifier);
+    ctx.subscriptions.push(registerTableCommand('text-tables.moveColRight', async (editor, range, table) => {
+        await cmd.moveColRight(editor, range, table, stringifier);
     }));
-    ctx.subscriptions.push(registerTableCommand('text-tables.moveColLeft', (editor, e, range, table) => {
-        cmd.moveColLeft(editor, e, range, table, stringifier);
+    ctx.subscriptions.push(registerTableCommand('text-tables.moveColLeft', async (editor, range, table) => {
+        await cmd.moveColLeft(editor, range, table, stringifier);
     }));
 
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.clearCell',
@@ -102,13 +102,13 @@ export function activate(ctx: vscode.ExtensionContext) {
     }));
 
     ctx.subscriptions.push(registerTableCommand('text-tables.gotoPreviousCell', cmd.gotoPreviousCell, {format: true}));
-    ctx.subscriptions.push(registerTableCommand('text-tables.nextRow', (editor, e, range, table) => {
-        cmd.nextRow(editor, e, range, table, stringifier);
+    ctx.subscriptions.push(registerTableCommand('text-tables.nextRow', async (editor, range, table) => {
+        await cmd.nextRow(editor, range, table, stringifier);
     }));
 
     // Format table under cursor
     ctx.subscriptions.push(registerTableCommand('text-tables.formatUnderCursor',
-        (editor, e, range, table) => cmd.formatUnderCursor(editor, e, range, table, stringifier)));
+        (editor, range, table) => cmd.formatUnderCursor(editor, range, table, stringifier)));
 
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.createTable', editor => {
         const opts: vscode.InputBoxOptions = {
@@ -140,10 +140,16 @@ export function activate(ctx: vscode.ExtensionContext) {
 export function deactivate() {
 }
 
-type TableCommandCallback = (editor: vscode.TextEditor, e: vscode.TextEditorEdit, tableLocation: vscode.Range, table: Table) => void;
+type TableCommandCallback = (editor: vscode.TextEditor, tableLocation: vscode.Range, table: Table) => Thenable<void>;
 
 function registerTableCommand(command: string, callback: TableCommandCallback, options?: {format: boolean}) {
-    return vscode.commands.registerTextEditorCommand(command, async (editor, e) => {
+    return vscode.commands.registerCommand(command, async () => {
+        const editor = vscode.window.activeTextEditor;
+
+        if (isUndefined(editor)) {
+            return;
+        }
+
         const tableRange = locator.locate(editor.document, editor.selection.start.line);
         if (isUndefined(tableRange)) {
             return;
@@ -158,9 +164,9 @@ function registerTableCommand(command: string, callback: TableCommandCallback, o
         table.startLine = tableRange.start.line;
 
         if (options && options.format) {
-            cmd.formatUnderCursor(editor, e, tableRange, table, stringifier).then(() => callback(editor, e, tableRange, table));
-        } else {
-            callback(editor, e, tableRange, table);
+            await cmd.formatUnderCursor(editor, tableRange, table, stringifier);
         }
+
+        await callback(editor, tableRange, table);
     });
 }
