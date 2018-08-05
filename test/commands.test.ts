@@ -20,9 +20,19 @@ function move(editor: vscode.TextEditor, line: number, col: number) {
 
 suite('Commands', () => {
     setup(() => {
-        vscode.workspace.updateWorkspaceFolders(0, null, {uri: vscode.Uri.parse('.')});
-
-        return vscode.workspace.saveAll();
+        // For running e2e tests we want to change configuration on the fly, checking different
+        // modes. In order not to mess with global configuration, it's better to create workspace
+        // and work with workspace configuration that overrides any global settings.
+        // Following piece of code checks whether we have workspace or not and creates new workspace
+        // if we don't have it. This check is required because when you run tests from VS Code
+        // directly, there is no workspace created. If you run tests from command line, workspace IS
+        // created. If you have workspace and you call updateWorkspaceFolders, workspace settings
+        // file is changed and next call for settings update will fail with the following error:
+        // Unable to write into workspace settings because the file is dirty. Please save the
+        // workspace settings file first and then try again.
+        if (vscode.workspace.workspaceFolders === undefined) {
+            vscode.workspace.updateWorkspaceFolders(0, null, {uri: vscode.Uri.parse('.')});
+        }
     });
 
     test('Test "Create table" for markdown', async () => {
