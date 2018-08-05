@@ -19,9 +19,10 @@ function move(editor: vscode.TextEditor, line: number, col: number) {
 }
 
 suite('Commands', () => {
-    setup(async () => {
+    setup(() => {
         vscode.workspace.updateWorkspaceFolders(0, null, {uri: vscode.Uri.parse('.')});
-        await vscode.workspace.saveAll();
+
+        return vscode.workspace.saveAll();
     });
 
     test('Test "Create table" for markdown', async () => {
