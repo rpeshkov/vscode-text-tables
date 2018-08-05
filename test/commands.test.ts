@@ -45,7 +45,7 @@ suite('Commands', () => {
             await cmd.createTable(2, 2, editor, new MarkdownStringifier());
             assert.equal(document.getText(), expectedResult);
         });
-    });
+    }).timeout(10000);
 
     test('Test "Create table" for org', async () => {
         const expectedResult = `|  |  |
