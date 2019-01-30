@@ -72,6 +72,9 @@ export function activate(ctx: vscode.ExtensionContext) {
     ctx.subscriptions.push(registerTableCommand('text-tables.moveColLeft', async (editor, range, table) => {
         await cmd.moveColLeft(editor, range, table, stringifier);
     }));
+    ctx.subscriptions.push(registerTableCommand('text-tables.createColLeft', async (editor, range, table) => {
+        await cmd.createColumnOnLeft(editor, range, table, stringifier);
+    }));
 
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.clearCell',
         (e, ed) => cmd.clearCell(e, ed, parser)));

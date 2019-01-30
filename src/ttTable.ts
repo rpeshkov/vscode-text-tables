@@ -58,6 +58,19 @@ export class Table {
         this.data.push(values);
     }
 
+    addCol(index: number) {
+        const newColumn = {
+            alignment: Alignment.Left,
+            width: 0
+        };
+
+        this.cols.splice(index, 0, newColumn);
+
+        for (const row of this.data) {
+            row.splice(index, 0, '');
+        }
+    }
+
     getAt(row: number, col: number): string {
         return this.data[row][col];
     }
@@ -113,6 +126,15 @@ export class TableNavigator {
 
     constructor(public table: Table) {
         this.jumpPositions = this.buildJumpPositions();
+    }
+
+    column(column: number): vscode.Position | undefined {
+        if (column >= this.jumpPositions.length) {
+            return undefined;
+        }
+        else {
+            return this.jumpPositions[column].range.start.translate(0, 1);
+        }
     }
 
     nextCell(cursorPosition: vscode.Position): vscode.Position | undefined {

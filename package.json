@@ -85,6 +85,11 @@
                 "category": "Text Tables"
             },
             {
+                "command": "text-tables.createColLeft",
+                "title": "Create column left to",
+                "category": "Text Tables"
+            },
+            {
                 "command": "text-tables.nextRow",
                 "title": "Next row",
                 "category": "Text Tables"
@@ -159,6 +164,11 @@
             {
                 "command": "text-tables.moveColLeft",
                 "key": "alt+left",
+                "when": "tableMode"
+            },
+            {
+                "command": "text-tables.createColLeft",
+                "key": "alt+numpad_add",
                 "when": "tableMode"
             },
             {
