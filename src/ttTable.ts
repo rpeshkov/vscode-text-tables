@@ -76,7 +76,7 @@ export interface Parser {
 }
 
 export interface Stringifier {
-    stringify(table: Table): string;
+    stringify(table: Table, eol: vscode.EndOfLine): string;
 }
 
 export interface Locator {

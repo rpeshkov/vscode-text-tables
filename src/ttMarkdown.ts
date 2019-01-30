@@ -1,6 +1,7 @@
 import * as tt from './ttTable';
 import * as vscode from 'vscode';
 import { RowType } from './ttTable';
+import { convertEOL } from './utils';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
@@ -78,7 +79,7 @@ export class MarkdownStringifier implements tt.Stringifier {
         [tt.RowType.Separator, this.separatorReducer],
     ]);
 
-    stringify(table: tt.Table): string {
+    stringify(table: tt.Table, eol: vscode.EndOfLine): string {
         const result = [];
 
         if (table.rows.some(x => x.type === RowType.Separator)) {
@@ -95,7 +96,7 @@ export class MarkdownStringifier implements tt.Stringifier {
             result.push(rowString);
         }
 
-        return result.join('\n');
+        return result.join(convertEOL(eol));
     }
 
     private dataRowReducer(cols: tt.ColDef[]): StringReducer {

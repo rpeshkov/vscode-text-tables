@@ -12,7 +12,7 @@ export async function createTable(rowsCount: number, colsCount: number, editor: 
     table.rows[1].type = RowType.Separator;
 
     const currentPosition = editor.selection.start;
-    await editor.edit(b => b.insert(currentPosition, stringifier.stringify(table)));
+    await editor.edit(b => b.insert(currentPosition, stringifier.stringify(table, editor.document.eol)));
     editor.selection = new vscode.Selection(currentPosition, currentPosition);
 }
 
@@ -72,7 +72,7 @@ export async function gotoPreviousCell(editor: vscode.TextEditor, _range: vscode
  * Format table under cursor
  */
 export async function formatUnderCursor(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
-    const newText = stringifier.stringify(table);
+    const newText = stringifier.stringify(table, editor.document.eol);
     const prevSel = editor.selection.start;
 
     await editor.edit(e => e.replace(range, newText));
@@ -103,7 +103,7 @@ export async function moveColRight(editor: vscode.TextEditor, range: vscode.Rang
         table.setAt(i, rowCol.col, v2);
     });
 
-    const newText = stringifier.stringify(table);
+    const newText = stringifier.stringify(table, editor.document.eol);
     await editor.edit(e => e.replace(range, newText));
     await gotoNextCell(editor, range, table, stringifier);
 }
@@ -132,7 +132,7 @@ export async function moveColLeft(editor: vscode.TextEditor, range: vscode.Range
         table.setAt(i, rowCol.col, v2);
     });
 
-    const newText = stringifier.stringify(table);
+    const newText = stringifier.stringify(table, editor.document.eol);
     await editor.edit(e => e.replace(range, newText));
     await gotoPreviousCell(editor, range, table);
 }
@@ -177,7 +177,7 @@ export async function nextRow(editor: vscode.TextEditor, range: vscode.Range, ta
         table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
     }
 
-    await editor.edit(b => b.replace(range, stringifier.stringify(table)));
+    await editor.edit(b => b.replace(range, stringifier.stringify(table, editor.document.eol)));
 
     const nav = new TableNavigator(table);
     const nextRowPos = nav.nextRow(editor.selection.start);
