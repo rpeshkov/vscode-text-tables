@@ -32,6 +32,7 @@ Extension provides several commands that are available in the Command Palette:
 - `Text Tables: Go to next cell` - switch to next cell in current table.
 - `Text Tables: Go to previous cell` - switch to previous cell in current table.
 - `Text Tables: Clear cell` - clear cell under cursor.
+- `Text Tables: Create column left to` - create a new column left to the current column.
 
 You can access all of the above commands from the command pallete (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd> or <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd>)
 
@@ -57,6 +58,7 @@ When in table mode, <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keybindin
 
 - <kbd>Tab</kbd> - navigate to the next cell in table.
 - <kbd>Shift</kbd>+<kbd>Tab</kbd> - navigate to the previous cell in table.
+- <kbd>Alt</kbd>+<kbd>Numpad +</kbd> - create a new column left to the current position.
 
 ### Custom keybindings
 
