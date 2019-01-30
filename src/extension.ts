@@ -33,7 +33,7 @@ export function activate(ctx: vscode.ExtensionContext) {
     loadConfiguration();
 
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    registerContext(ContextType.TableMode, '$(book) Table Mode', statusItem);
+    registerContext(ContextType.TableMode, 'Table', statusItem);
     statusItem.command = 'text-tables.tableModeToggle';
 
     if (configuration.showStatus) {
