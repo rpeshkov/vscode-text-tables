@@ -7,7 +7,7 @@ import { OrgLocator, OrgParser, OrgStringifier } from './ttOrg';
 import { Locator, Parser, Stringifier, Table } from './ttTable';
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown';
 import { isUndefined } from 'util';
-import { registerContext, ContextType, enterContext, exitContext, restoreContext } from './context';
+import { registerContext, ContextType, enterContext, exitContext, restoreContext, toggleContext } from './context';
 import * as cfg from './configuration';
 
 let locator: Locator;
@@ -34,6 +34,7 @@ export function activate(ctx: vscode.ExtensionContext) {
 
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
     registerContext(ContextType.TableMode, '$(book) Table Mode', statusItem);
+    statusItem.command = 'text-tables.tableModeToggle';
 
     if (configuration.showStatus) {
         statusItem.show();
@@ -63,6 +64,8 @@ export function activate(ctx: vscode.ExtensionContext) {
         (e) => enterContext(e, ContextType.TableMode)));
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeOff',
         (e) => exitContext(e, ContextType.TableMode)));
+    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeToggle',
+        (e) => toggleContext(e, ContextType.TableMode)));
 
     ctx.subscriptions.push(registerTableCommand('text-tables.moveRowDown', cmd.moveRowDown, {format: true}));
     ctx.subscriptions.push(registerTableCommand('text-tables.moveRowUp', cmd.moveRowUp, {format: true}));
