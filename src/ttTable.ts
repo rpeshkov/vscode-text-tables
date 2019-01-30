@@ -27,6 +27,11 @@ export class Table {
      */
     startLine = 0;
 
+    /**
+     * The table prefix to keep the current indentation
+     */
+    prefix = '';
+
     rows: RowDef[] = [];
     cols: ColDef[] = [];
 
@@ -153,6 +158,7 @@ export class TableNavigator {
     private buildJumpPositions(): JumpPosition[] {
         const result: JumpPosition[] = [];
 
+        const tableOffset = this.table.prefix.length;
         const cellPadding = 2;
         let lastAnchor = 0;
         const anchors = this.table.cols.reduce((accum, col) => {
@@ -172,15 +178,15 @@ export class TableNavigator {
                 // Extend last range to whole separator line or start from beginning of line
                 const start = prevJmpPos
                     ? prevJmpPos.range.end
-                    : new vscode.Position(rowLine, 0);
+                    : new vscode.Position(rowLine, tableOffset);
                 const end = start.translate(1);
                 const jmpPos = new JumpPosition(start, end, true, prevJmpPos);
                 result.push(jmpPos);
             } else {
                 for (let j = 0; j < anchors.length - 1; ++j) {
                     const prevJmpPos = result[result.length - 1];
-                    const start = new vscode.Position(rowLine, anchors[j] + 1);
-                    const end = new vscode.Position(rowLine, anchors[j + 1]);
+                    const start = new vscode.Position(rowLine, anchors[j] + 1 + tableOffset);
+                    const end = new vscode.Position(rowLine, anchors[j + 1] + tableOffset);
                     const jmpPos = new JumpPosition(start, end, false, prevJmpPos);
                     result.push(jmpPos);
                 }

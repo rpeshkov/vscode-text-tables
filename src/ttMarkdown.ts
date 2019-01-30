@@ -1,7 +1,7 @@
 import * as tt from './ttTable';
 import * as vscode from 'vscode';
 import { RowType } from './ttTable';
-import { convertEOL } from './utils';
+import { convertEOL, findTablePrefix } from './utils';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
@@ -15,6 +15,8 @@ export class MarkdownParser implements tt.Parser {
         }
 
         const result = new tt.Table();
+        result.prefix = findTablePrefix(text, verticalSeparator);
+
         const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
 
         for (const s of strings) {
@@ -87,11 +89,11 @@ export class MarkdownStringifier implements tt.Stringifier {
         }
 
         for (let i = 0; i < table.rows.length; ++i) {
-            let rowString = '';
+            let rowString = table.prefix;
             const rowData = table.getRow(i);
             const reducer = this.reducers.get(table.rows[i].type);
             if (reducer) {
-                rowString = rowData.reduce(reducer(table.cols), verticalSeparator);
+                rowString += rowData.reduce(reducer(table.cols), verticalSeparator);
             }
             result.push(rowString);
         }
