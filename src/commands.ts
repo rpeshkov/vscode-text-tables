@@ -74,8 +74,10 @@ export async function gotoPreviousCell(editor: vscode.TextEditor, _range: vscode
 export async function formatUnderCursor(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
     const newText = stringifier.stringify(table, editor.document.eol);
     const prevSel = editor.selection.start;
-
-    await editor.edit(e => e.replace(range, newText));
+    const original = editor.document.getText(range);
+    if (newText !== original) {
+        await editor.edit(e => e.replace(range, newText));
+    }
     editor.selection = new vscode.Selection(prevSel, prevSel);
 }
 
