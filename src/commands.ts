@@ -192,7 +192,7 @@ function rowColFromPosition(table: Table, position: vscode.Position): { row: num
     const result = { row: -1, col: -1 };
 
     result.row = position.line - table.startLine;
-    let counter = 1;
+    let counter = 1 + table.prefix.length;
     for (let i = 0; i < table.cols.length; ++i) {
         const col = table.cols[i];
         if (position.character >= counter && position.character < counter + col.width + 3) {
