@@ -27,6 +27,9 @@
     "activationEvents": [
         "onLanguage:markdown",
         "onLanguage:org",
+        "onLanguage:cucumber",
+        "onLanguage:gherkin",
+        "onLanguage:feature",
         "onCommand:text-tables.enable"
     ],
     "main": "./out/src/extension",
