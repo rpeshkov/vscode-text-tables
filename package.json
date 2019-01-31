@@ -139,12 +139,12 @@
             {
                 "command": "text-tables.gotoNextCell",
                 "key": "tab",
-                "when": "tableMode"
+                "when": "tableMode && inTable"
             },
             {
                 "command": "text-tables.gotoPreviousCell",
                 "key": "shift+tab",
-                "when": "tableMode"
+                "when": "tableMode && inTable"
             },
             {
                 "command": "text-tables.moveRowUp",
@@ -159,22 +159,22 @@
             {
                 "command": "text-tables.moveColRight",
                 "key": "alt+right",
-                "when": "tableMode"
+                "when": "tableMode && inTable"
             },
             {
                 "command": "text-tables.moveColLeft",
                 "key": "alt+left",
-                "when": "tableMode"
+                "when": "tableMode && inTable"
             },
             {
                 "command": "text-tables.createColLeft",
                 "key": "alt+numpad_add",
-                "when": "tableMode"
+                "when": "tableMode && inTable"
             },
             {
                 "command": "text-tables.nextRow",
                 "key": "enter",
-                "when": "tableMode"
+                "when": "tableMode && inTable"
             }
         ]
     },

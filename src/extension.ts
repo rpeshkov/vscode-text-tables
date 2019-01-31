@@ -7,7 +7,7 @@ import { OrgLocator, OrgParser, OrgStringifier } from './ttOrg';
 import { Locator, Parser, Stringifier, Table } from './ttTable';
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown';
 import { isUndefined } from 'util';
-import { registerContext, ContextType, enterContext, exitContext, restoreContext, toggleContext } from './context';
+import { registerContext, ContextType, enterContext, exitContext, restoreContext, toggleContext, updateSelectionContext } from './context';
 import * as cfg from './configuration';
 
 let locator: Locator;
@@ -31,8 +31,10 @@ function loadConfiguration() {
 
 export function activate(ctx: vscode.ExtensionContext) {
     loadConfiguration();
+    registerContext(ContextType.InTable, 'Cursor in table');
 
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+
     registerContext(ContextType.TableMode, 'Table', statusItem);
     statusItem.command = 'text-tables.tableModeToggle';
 
@@ -117,6 +119,11 @@ export function activate(ctx: vscode.ExtensionContext) {
             }
         }
     }));
+
+    // Register listeners for the table selection context
+    ctx.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateSelectionContext));
+    ctx.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(updateSelectionContext));
+    updateSelectionContext();
 }
 
 export function deactivate() {

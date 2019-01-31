@@ -1,11 +1,13 @@
 import * as vscode from 'vscode';
 
 export enum ContextType {
-    TableMode = 'tableMode'
+    TableMode = 'tableMode',
+    InTable = 'inTable'
 }
 
 const contexts: Map<ContextType, Context> = new Map();
 const state: Map<string, ContextType[]> = new Map();
+const tableSeparatorStart = /[|] ?[-]+$/;
 
 export function registerContext(type: ContextType, title: string, statusItem?: vscode.StatusBarItem) {
     const ctx = new Context(type, title, statusItem);
@@ -53,6 +55,32 @@ export function restoreContext(editor: vscode.TextEditor) {
 
     toEnter.forEach(x => enterContext(editor, x));
     toExit.forEach(x => exitContext(editor, x));
+}
+
+export function updateSelectionContext(): void {
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+        if (selectionInTable(editor)) {
+            enterContext(editor, ContextType.InTable);
+        }
+        else {
+            exitContext(editor, ContextType.InTable);
+        }
+    }
+}
+
+function selectionInTable(editor: vscode.TextEditor): boolean {
+    if (editor.selections.length === 1) {
+        const selection = editor.selections[0];
+        if (selection.start.isEqual(selection.end)) {
+            const line = editor.document.lineAt(selection.start.line).text;
+            const left = line.substr(0, selection.start.character)
+            const right = line.substr(selection.start.character);
+
+            return ((left.indexOf('|') >= 0) && (right.indexOf('|') >= 0)) || tableSeparatorStart.test(left);
+        }
+    }
+    return false;
 }
 
 class Context {
