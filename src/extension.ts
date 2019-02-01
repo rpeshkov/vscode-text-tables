@@ -32,6 +32,7 @@ function loadConfiguration() {
 export function activate(ctx: vscode.ExtensionContext) {
     loadConfiguration();
     registerContext(ContextType.InTable, 'Cursor in table');
+    registerContext(ContextType.PotentiallyInTable, 'Cursor potentially in table');
 
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 
