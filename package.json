@@ -2,7 +2,7 @@
     "name": "vscode-text-tables",
     "displayName": "Text Tables",
     "description": "Work with text tables without pain",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "icon": "icons/icon.png",
     "preview": false,
     "publisher": "RomanPeshkov",
@@ -93,6 +93,11 @@
                 "category": "Text Tables"
             },
             {
+                "command": "text-tables.deleteColumn",
+                "title": "Delete column",
+                "category": "Text Tables"
+            },            
+            {
                 "command": "text-tables.nextRow",
                 "title": "Next row",
                 "category": "Text Tables"
@@ -172,6 +177,11 @@
             {
                 "command": "text-tables.createColLeft",
                 "key": "alt+numpad_add",
+                "when": "tableMode && inTable"
+            },
+            {
+                "command": "text-tables.deleteColumn",
+                "key": "alt+numpad_subtract",
                 "when": "tableMode && inTable"
             },
             {

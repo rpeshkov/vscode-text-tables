@@ -58,6 +58,14 @@ export class Table {
         this.data.push(values);
     }
 
+    deleteCol(index: number) {
+        this.cols.splice(index, 1);
+
+        for (const row of this.data) {
+            row.splice(index, 1);
+        }
+    }
+
     addCol(index: number) {
         const newColumn = {
             alignment: Alignment.Left,

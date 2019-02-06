@@ -148,14 +148,35 @@ export async function createColumnOnLeft(editor: vscode.TextEditor, range: vscod
 
     table.addCol(rowCol.col);
 
+    updateText(editor, range, table, stringifier);
+    restoreCursor(rowCol.row, rowCol.col, editor, table);
+}
+
+export async function deleteColumn(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
+    const rowCol = rowColFromPosition(table, editor.selection.start);
+    if (rowCol.col < 0) {
+        vscode.window.showWarningMessage('Not in table data field');
+        return;
+    }
+
+    table.deleteCol(rowCol.col);
+
+    updateText(editor, range, table, stringifier);
+    restoreCursor(rowCol.row, rowCol.col, editor, table);
+}
+
+async function updateText(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
     const newText = stringifier.stringify(table, editor.document.eol);
 
     await editor.edit(e => e.replace(range, newText));
+}
+
+async function restoreCursor(row: number, col: number, editor: vscode.TextEditor, table: Table) {
     const nav = new TableNavigator(table);
-    const nextColPosition = nav.column(rowCol.col);
+    const nextColPosition = nav.column(col);
 
     if (nextColPosition) {
-        const nextPosition = nextColPosition.translate(rowCol.row, 0);
+        const nextPosition = nextColPosition.translate(row, 0);
         editor.selection = new vscode.Selection(nextPosition, nextPosition);
     }
 }
