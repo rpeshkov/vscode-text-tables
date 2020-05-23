@@ -5,3 +5,6 @@ node_modules
 
 .DS_Store
 coverage/
+e2e/*
+!e2e/e2e.code-workspace
+
