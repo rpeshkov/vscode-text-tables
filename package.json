@@ -96,7 +96,7 @@
                 "command": "text-tables.deleteColumn",
                 "title": "Delete column",
                 "category": "Text Tables"
-            },            
+            },
             {
                 "command": "text-tables.nextRow",
                 "title": "Next row",
@@ -210,6 +210,7 @@
         "remap-istanbul": "^0.11.0",
         "tslint": "^5.8.0",
         "typescript": "^2.6.1",
+        "vsce": "^1.81.1",
         "vscode": "^1.1.18"
     }
 }
