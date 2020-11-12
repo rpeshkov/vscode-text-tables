@@ -52,6 +52,7 @@ export function toggleContext(editor: vscode.TextEditor, type: ContextType) {
 
 export function restoreContext(editor: vscode.TextEditor) {
     let toEnter: ContextType[] = [];
+    // @ts-ignore
     let toExit: ContextType[] = Object.keys(ContextType).map((x: any) => ContextType[x] as ContextType);
 
     if (state.has(editor.document.fileName)) {

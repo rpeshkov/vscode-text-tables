@@ -6,3 +6,6 @@ node_modules
 .DS_Store
 coverage/
 .idea/
+e2e/*
+!e2e/e2e.code-workspace
+
