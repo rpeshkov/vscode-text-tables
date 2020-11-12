@@ -33,6 +33,15 @@ export function exitContext(editor: vscode.TextEditor, type: ContextType) {
     }
 }
 
+export function toggleContext(editor: vscode.TextEditor, type: ContextType) {
+    const editorState = state.get(editor.document.fileName) || [];
+    if (editorState.indexOf(ContextType.TableMode) >= 0) {
+        exitContext(editor, type);
+    } else {
+        enterContext(editor, type);
+    }
+}
+
 export function restoreContext(editor: vscode.TextEditor) {
     let toEnter: ContextType[] = [];
     // @ts-ignore
@@ -55,8 +64,8 @@ class Context {
     setState(isEnabled: boolean) {
         vscode.commands.executeCommand('setContext', this.type, isEnabled);
         if (this.statusItem) {
-            const stateText = isEnabled ? 'On' : 'Off';
-            this.statusItem.text = `${this.title}: ${stateText}`;
+            const stateText = isEnabled ? '$(check)' : '$(x)';
+            this.statusItem.text = `${this.title} ${stateText}`;
         }
     }
 }
