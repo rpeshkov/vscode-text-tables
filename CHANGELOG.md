@@ -15,11 +15,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Command `text-tables.nextRow` (`Text Tables: Next row` in command pallete) for jumping on next row and creating new rows if needed.
+- Command `text-tables.nextRow` (`Text Tables: Next row` in command palette) for jumping on next row and creating new rows if needed.
 
 ### Changed
 
-- Command `text-tables.gotoNextCell` (`Text Tables: Go to next cell` in command pallete) inserts new row when applied in last data cell of table.
+- Command `text-tables.gotoNextCell` (`Text Tables: Go to next cell` in command palette) inserts new row when applied in last data cell of table.
 - Fixed markdown parser for tables with separator row where separator row has less columns than other row (#33).
 
 ## [0.1.0] - 2018-04-16
@@ -60,8 +60,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Command `text-tables.enable` (`Text Tables: Enable` in command pallete) for activating extension in any file.
-- Command `text-tables.clearCell` (`Text Tables: Clear cell` in command pallete) for clearing cell under cursor.
+- Command `text-tables.enable` (`Text Tables: Enable` in command palette) for activating extension in any file.
+- Command `text-tables.clearCell` (`Text Tables: Clear cell` in command palette) for clearing cell under cursor.
 
 ## [0.0.4] - 2018-04-11
 

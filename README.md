@@ -18,7 +18,7 @@ VSCode extension that brings the power of Emacs table editing.
 
 ## Activation
 
-Extension is automatically activated when you open markdown or org file. If you want to use this extension in any other file, just trigger `Text Tables: Enable` command in command pallete.
+Extension is automatically activated when you open markdown or org file. If you want to use this extension in any other file, just trigger `Text Tables: Enable` command in command palette.
 
 ## Commands
 
@@ -34,7 +34,7 @@ Extension provides several commands that are available in the Command Palette:
 - `Text Tables: Clear cell` - clear cell under cursor.
 - `Text Tables: Create column left to` - create a new column left to the current column.
 
-You can access all of the above commands from the command pallete (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd> or <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd>)
+You can access all of the above commands from the command palette (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd> or <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>p</kbd>)
 
 ## Table mode
 
