@@ -216,15 +216,16 @@ export function clearCell(editor: vscode.TextEditor, edit: vscode.TextEditorEdit
  */
 export async function nextRow(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
     const inLastRow = range.end.line === editor.selection.start.line;
+    const start = editor.selection.start
 
     if (inLastRow) {
         table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
     }
 
     await editor.edit(b => b.replace(range, stringifier.stringify(table, editor.document.eol)));
-
+    
     const nav = new TableNavigator(table);
-    const nextRowPos = nav.nextRow(editor.selection.start);
+    const nextRowPos = nav.nextRow(start);
     if (nextRowPos) {
         editor.selection = new vscode.Selection(nextRowPos, nextRowPos);
     }
