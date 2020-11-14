@@ -136,12 +136,14 @@ export class TableNavigator {
         this.jumpPositions = this.buildJumpPositions();
     }
 
-    column(column: number): vscode.Position | undefined {
-        if (column >= this.jumpPositions.length) {
+    position(row: number, column: number): vscode.Position | undefined {
+        const jumPosition = row * this.table.cols.length + column
+
+        if (jumPosition >= this.jumpPositions.length) {
             return undefined;
         }
         else {
-            return this.jumpPositions[column].range.start.translate(0, 1);
+            return this.jumpPositions[jumPosition].range.start.translate(0, 1);
         }
     }
 
