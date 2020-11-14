@@ -40,6 +40,35 @@ export async function moveRowUp(editor: vscode.TextEditor, _range: vscode.Range,
     await vscode.commands.executeCommand('editor.action.moveLinesUpAction');
 }
 
+/**
+ * Move cursor to the next cell of table
+ */
+export async function gotoNextCell(editor: vscode.TextEditor, range: vscode.Range, table: Table,
+    stringifier: Stringifier) {
+
+    const nav = new TableNavigator(table);
+    const newPos = nav.nextCell(editor.selection.start);
+    if (newPos) {
+        await formatUnderCursor(editor, range, table, stringifier);
+        editor.selection = new vscode.Selection(newPos, newPos);
+    } else {
+        table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
+        await gotoNextCell(editor, range, table, stringifier);
+    }
+}
+
+/**
+ * Move cursor to the previous cell of table
+ */
+export async function gotoPreviousCell(editor: vscode.TextEditor, _range: vscode.Range, table: Table) {
+    const nav = new TableNavigator(table);
+    const newPos = nav.previousCell(editor.selection.start);
+    if (newPos) {
+        editor.selection = new vscode.Selection(newPos, newPos);
+    }
+}
+
+
 export async function setCursor(editor: vscode.TextEditor, table: Table, position: { row: number, col: number }) {
     const nav = new TableNavigator(table);
     const newPos = nav.position(position.row, position.col)
