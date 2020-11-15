@@ -111,10 +111,10 @@ export class MarkdownStringifier implements tt.Stringifier {
     private separatorReducer(cols: tt.ColDef[]): StringReducer {
         return (prev, _, idx) => {
             const begin = cols[idx].alignment === tt.Alignment.Center
-                ? ' :'
+                ? ':-'
                 : ' -';
             const ending = cols[idx].alignment !== tt.Alignment.Left
-                ? ': ' + verticalSeparator
+                ? '-:' + verticalSeparator
                 : '- ' + verticalSeparator;
 
             const middle = horizontalSeparator.repeat(cols[idx].width - 2);
