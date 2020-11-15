@@ -22,7 +22,6 @@ export async function createTable(rowsCount: number, colsCount: number, editor: 
 export async function moveRowDown(editor: vscode.TextEditor, _range: vscode.Range, table: Table) {
     const rowNum = editor.selection.end.line - table.startLine;
     if (rowNum >= table.rows.length - 1) {
-        vscode.window.showWarningMessage('Cannot move row further');
         return;
     }
     await vscode.commands.executeCommand('editor.action.moveLinesDownAction');
@@ -34,7 +33,6 @@ export async function moveRowDown(editor: vscode.TextEditor, _range: vscode.Rang
 export async function moveRowUp(editor: vscode.TextEditor, _range: vscode.Range, table: Table) {
     const rowNum = editor.selection.start.line - table.startLine;
     if (rowNum <= 0) {
-        vscode.window.showWarningMessage('Cannot move row further');
         return;
     }
     await vscode.commands.executeCommand('editor.action.moveLinesUpAction');
@@ -103,7 +101,6 @@ export async function moveColRight(editor: vscode.TextEditor, range: vscode.Rang
     }
 
     if (rowCol.col >= table.cols.length - 1 ) {
-        vscode.window.showWarningMessage('Cannot move column further right');
         return;
     }
 
@@ -136,7 +133,6 @@ export async function moveColLeft(editor: vscode.TextEditor, range: vscode.Range
     }
 
     if (rowCol.col === 0) {
-        vscode.window.showWarningMessage('Cannot move column further left');
         return;
     }
 
