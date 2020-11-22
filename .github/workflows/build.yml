@@ -17,7 +17,9 @@ jobs:
       env:
         CI: true
     - name: test
-      run: npm test
+      run: |
+        sudo apt-get install xvfb
+        xvfb-run --auto-servernum npm test
       env:
         CI: true
      
