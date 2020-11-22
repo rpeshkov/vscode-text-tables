@@ -71,7 +71,7 @@ export class MarkdownParser implements tt.Parser {
 
     isSeparatorRow(text: string): boolean {
         const cleaned = text.replace(/\s+/g, '');
-        return cleaned.startsWith('|-') || cleaned.startsWith('|:-');
+        return (cleaned.startsWith('|-') || cleaned.startsWith('|:-')) && cleaned.match(/^[:|-\s]+$/) ? true : false;
     }
 }
 

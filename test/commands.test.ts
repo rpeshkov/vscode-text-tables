@@ -22,7 +22,7 @@ suite('Commands', () => {
     test('Regression: Format under cursor causes loss of data.', async () => {
         const testCase =
         `| A| B|
-        | -1| -1|`;
+| -1| -1|`;
         const expected =
         `| A  | B  |
 | -1 | -1 |`;
