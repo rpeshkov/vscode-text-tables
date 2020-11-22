@@ -34,6 +34,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./vscode-github-actions-1.0.${{ github.run_number }}.vsix
-          asset_name: vscode-github-actions-1.0.${{ github.run_number }}.vsix
+          asset_path: ./vscode-text-tables-0.1.${{ github.run_number }}.vsix
+          asset_name: vscode-text-tables-0.1.${{ github.run_number }}.vsix
           asset_content_type: application/vsix
