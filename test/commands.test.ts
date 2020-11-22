@@ -19,6 +19,23 @@ function move(editor: vscode.TextEditor, line: number, col: number) {
 }
 
 suite('Commands', () => {
+    test('Regression: Format under cursor causes loss of data.', async () => {
+        const testCase =
+        `| A| B|
+        | -1| -1|`;
+        const expected =
+        `| A  | B  |
+| -1 | -1 |`;
+        
+        await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
+            await cfg.override({mode: 'markdown'});
+            move(editor, 0, 1);
+            await vscode.commands.executeCommand('text-tables.gotoNextCell');
+
+            assert.equal(document.getText(), expected);
+        });
+    });
+
     test('Test "Create table" for markdown', async () => {
         const expectedResult = `|     |     |
 | --- | --- |
