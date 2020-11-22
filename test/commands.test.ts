@@ -28,7 +28,24 @@ suite('Commands', () => {
 | -1 | -1 |`;
         
         await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
-            await cfg.override({mode: 'markdown'});
+            await cfg.override({mode: cfg.Mode.Markdown});
+            move(editor, 0, 1);
+            await vscode.commands.executeCommand('text-tables.gotoNextCell');
+
+            assert.equal(document.getText(), expected);
+        });
+    });
+
+    test('Regression: Format under cursor causes loss of data (org).', async () => {
+        const testCase =
+        `|A|B|
+|-1|-1|`;
+        const expected =
+        `| A  | B  |
+| -1 | -1 |`;
+        
+        await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
+            await cfg.override({mode: cfg.Mode.Org});
             move(editor, 0, 1);
             await vscode.commands.executeCommand('text-tables.gotoNextCell');
 

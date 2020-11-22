@@ -38,7 +38,7 @@ export class OrgParser implements tt.Parser {
     }
 
     isSeparatorRow(text: string): boolean {
-        return text.length > 1 && text[1] === horizontalSeparator;
+        return text.length > 1 && text[1] === horizontalSeparator && text.match(/^[+|-\s]+$/) ? true : false;;
     }
 }
 
