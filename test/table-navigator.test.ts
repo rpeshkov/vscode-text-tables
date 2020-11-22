@@ -43,22 +43,8 @@ suite('TableNavigator', () => {
             assert.equal(newPos!.line, 3);
             assert.equal(newPos!.character, 2);
         });
-
-        test('should skip separator row', () => {
-            const pos = new vscode.Position(0, 13);
-            const newPos = navigator.nextCell(pos);
-            assert.equal(newPos!.line, 2);
-            assert.equal(newPos!.character, 2);
-        });
-
         test('should not move if cursor is on separator and it\'s the last line', () => {
             const pos = new vscode.Position(4, 13);
-            const newPos = navigator.nextCell(pos);
-            assert.equal(newPos, undefined);
-        });
-
-        test('should not move if cursor in last cell and there is separator line below', () => {
-            const pos = new vscode.Position(3, 13);
             const newPos = navigator.nextCell(pos);
             assert.equal(newPos, undefined);
         });

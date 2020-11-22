@@ -76,6 +76,8 @@ suite('Commands', () => {
         const testCases = [
             new vscode.Position(0, 2),
             new vscode.Position(0, 5),
+            new vscode.Position(1, 2),
+            new vscode.Position(1, 5),
             new vscode.Position(2, 2),
             new vscode.Position(2, 5),
             new vscode.Position(3, 2),
@@ -100,6 +102,8 @@ suite('Commands', () => {
 
         const testCases = [
             new vscode.Position(2, 2),
+            new vscode.Position(1, 5),
+            new vscode.Position(1, 2),
             new vscode.Position(0, 5),
             new vscode.Position(0, 2),
             // Repeated intentionally to check that it won't jump outside

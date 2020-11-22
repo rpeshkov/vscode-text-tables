@@ -18,8 +18,6 @@ export function registerContext(type: ContextType, title: string, statusItem?: v
 }
 
 export function enterContext(editor: vscode.TextEditor, type: ContextType) {
-    console.log(`enterContext: ${type}`);
-
     const ctx = contexts.get(type);
     if (ctx) {
         ctx.setState(true);
@@ -30,8 +28,6 @@ export function enterContext(editor: vscode.TextEditor, type: ContextType) {
 }
 
 export function exitContext(editor: vscode.TextEditor, type: ContextType) {
-    console.log(`exitContext: ${type}`);
-
     const ctx = contexts.get(type);
     if (ctx) {
         ctx.setState(false);
