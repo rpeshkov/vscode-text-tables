@@ -137,12 +137,11 @@ export class TableNavigator {
     }
 
     position(row: number, column: number): vscode.Position | undefined {
-        const jumPosition = row * this.table.cols.length + column
+        const jumPosition = row * this.table.cols.length + column;
 
         if (jumPosition >= this.jumpPositions.length) {
             return undefined;
-        }
-        else {
+        } else {
             return this.jumpPositions[jumPosition].range.start.translate(0, 1);
         }
     }

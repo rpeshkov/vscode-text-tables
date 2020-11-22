@@ -71,15 +71,13 @@ export function updateSelectionContext(): void {
 
         if (selectionInTable(editor)) {
             enterContext(editor, ContextType.InTable);
-        }
-        else {
+        } else {
             exitContext(editor, ContextType.InTable);
         }
 
         if (inTable || selectionPotentiallyInTable(editor)) {
             enterContext(editor, ContextType.PotentiallyInTable);
-        }
-        else {
+        } else {
             exitContext(editor, ContextType.PotentiallyInTable);
         }
     }

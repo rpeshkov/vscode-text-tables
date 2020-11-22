@@ -5,8 +5,7 @@ export const tableSizeRe = /^(\d+)x(\d+)$/u;
 export function convertEOL(eol: vscode.EndOfLine): string {
     if (eol === vscode.EndOfLine.CRLF) {
         return '\r\n';
-    }
-    else {
+    } else {
         return '\n';
     }
 }
@@ -16,8 +15,7 @@ export function findTablePrefix(text: string, tableStart: string): string {
 
     if (startIndex > 0) {
         return text.substr(0, startIndex);
-    }
-    else {
+    } else {
         return '';
     }
 }

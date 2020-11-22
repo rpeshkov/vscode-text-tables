@@ -69,7 +69,7 @@ export async function gotoPreviousCell(editor: vscode.TextEditor, _range: vscode
 
 export async function setCursor(editor: vscode.TextEditor, table: Table, position: { row: number, col: number }) {
     const nav = new TableNavigator(table);
-    const newPos = nav.position(position.row, position.col)
+    const newPos = nav.position(position.row, position.col);
 
     if (newPos) {
         editor.selection = new vscode.Selection(newPos, newPos);
@@ -93,7 +93,7 @@ export async function formatUnderCursor(editor: vscode.TextEditor, range: vscode
  * Swap column under cursor with column on the right
  */
 export async function moveColRight(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
-    const start = editor.selection.start
+    const start = editor.selection.start;
     const rowCol = rowColFromPosition(table, start);
     if (rowCol.col < 0) {
         vscode.window.showWarningMessage('Not in table data field');
@@ -118,14 +118,14 @@ export async function moveColRight(editor: vscode.TextEditor, range: vscode.Rang
     await setCursor(editor, table, {
         row: rowCol.row,
         col: rowCol.col + 1
-    })
+    });
 }
 
 /**
  * Swap column under cursor with column on the left
  */
 export async function moveColLeft(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
-    const start = editor.selection.start
+    const start = editor.selection.start;
     const rowCol = rowColFromPosition(table, start);
     if (rowCol.col < 0) {
         vscode.window.showWarningMessage('Not in table data field');
@@ -150,7 +150,7 @@ export async function moveColLeft(editor: vscode.TextEditor, range: vscode.Range
     await setCursor(editor, table, {
         row: rowCol.row,
         col: rowCol.col - 1
-    })
+    });
 }
 
 export async function createColumnOnLeft(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
@@ -163,7 +163,7 @@ export async function createColumnOnLeft(editor: vscode.TextEditor, range: vscod
     table.addCol(rowCol.col);
 
     updateText(editor, range, table, stringifier);
-    setCursor(editor, table, rowCol)
+    setCursor(editor, table, rowCol);
 }
 
 export async function deleteColumn(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
@@ -179,7 +179,7 @@ export async function deleteColumn(editor: vscode.TextEditor, range: vscode.Rang
     setCursor(editor, table, {
         col: rowCol.col >= table.cols.length ? rowCol.col - 1 : rowCol.col,
         row: rowCol.row
-    })
+    });
 }
 
 async function updateText(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
@@ -223,7 +223,7 @@ export function clearCell(editor: vscode.TextEditor, edit: vscode.TextEditorEdit
  */
 export async function nextRow(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
     const inLastRow = range.end.line === editor.selection.start.line;
-    const start = editor.selection.start
+    const start = editor.selection.start;
 
     if (inLastRow) {
         table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
