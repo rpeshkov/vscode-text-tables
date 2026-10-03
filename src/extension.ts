@@ -6,7 +6,6 @@ import * as cmd from './commands';
 import { OrgLocator, OrgParser, OrgStringifier } from './ttOrg';
 import { Locator, Parser, Stringifier, Table } from './ttTable';
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown';
-import { isUndefined } from 'util';
 import { registerContext, ContextType, enterContext, exitContext, restoreContext } from './context';
 import * as cfg from './configuration';
 
@@ -122,21 +121,24 @@ function registerTableCommand(command: string, callback: TableCommandCallback, o
     return vscode.commands.registerCommand(command, async () => {
         const editor = vscode.window.activeTextEditor;
 
-        if (isUndefined(editor)) {
+        if (editor === undefined) {
             return;
         }
 
         const tableRange = locator.locate(editor.document, editor.selection.start.line);
-        if (isUndefined(tableRange)) {
+        if (editor === undefined) {
             return;
         }
         const selectedText = editor.document.getText(tableRange);
         const table = parser.parse(selectedText);
 
-        if (isUndefined(table)) {
+        if (editor === undefined) {
             return;
         }
 
+        if (!table || !tableRange) {
+            return;
+        }
         table.startLine = tableRange.start.line;
 
         if (options && options.format) {
